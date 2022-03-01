@@ -10,5 +10,5 @@ Forum for WAD2 AE2
 - Kai: Populate Script
 
 ## Useful Links
-https://www.python.org/dev/peps/pep-0008/
-https://www.pythonanywhere.com/user/namang/
+Style guide: https://www.python.org/dev/peps/pep-0008/  
+Hosting site: https://www.pythonanywhere.com/user/namang/

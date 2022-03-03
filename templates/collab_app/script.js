@@ -1,0 +1,3 @@
+function changeTheme(){
+    alert("Hello")
+}

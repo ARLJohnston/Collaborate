@@ -4,15 +4,18 @@ from django.http import HttpResponse
 # Create your views here.
 def index(request):
     """Takes url request, returns Http response."""
-    return HttpResponse("Hello, world.")
+    context_dict = {}
+    return render(request, 'collab_app/index.html', context_dict)
 
 def about(request):
     """Takes url request, returns about page"""
-    pass
+    context_dict = {}
+    return render(request, 'collab_app/about.html', context_dict)
 
 def contact_us(request):
     """Takes url request, returns contact-us page"""
-    pass
+    context_dict = {}
+    return render(request, 'collab_app/contact-us.html', context_dict)
 
 def sign_up(request):
     """Takes url request, returns sing-up page"""

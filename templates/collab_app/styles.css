@@ -14,10 +14,13 @@
 }
 
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
+  float :right;
+  position: relative;
+  width: 60px;
+  height: 34px;
+  top: 50%;
+  -ms-transform: translateY(65%);
+  transform: translateY(65%);
   }
   
   .switch input { 
@@ -34,9 +37,6 @@
     right: 0;
     bottom: 0;
     background-color: rgb(248 248 242); /* text color */
-    -webkit-transition: .4s;
-    transition: .4s;
-    transform: translateY(25%);
   }
   
   .slider:before { /*dot*/
@@ -76,11 +76,6 @@
   }
   * {box-sizing: border-box;}
   
-  body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  
   .topnav {
     overflow: hidden;
     /*background-color: #e9e9e9;*/
@@ -108,13 +103,14 @@
   }
   
   .topnav input[type=text] {
-    float: inline-start;
+    float: left;
     padding: 6px;
     margin-top: 8px;
     margin-right: 16px;
     border: none;
     font-size: 17px;
     transform: translateY(50%);
+    width: 50%;
   }
   
   @media screen and (max-width: 600px) {
@@ -129,6 +125,8 @@
     }
     
     .topnav input[type=text] {
-      border: 1px solid #ccc;  
+      border: 1px solid #ccc;
     }
   }
+
+  

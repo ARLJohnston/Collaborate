@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+{% extends 'collab_app/base.html' %}
+
+{% load staticfiles %}
+
+{% block title_block %}
+    Show University
+{% endblock %}
+
+{% block body_block %}
+{% endblock %}

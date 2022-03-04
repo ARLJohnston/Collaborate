@@ -1,37 +1,40 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 def index(request):
     """Takes url request, returns Http response."""
     context_dict = {}
-    return render(request, 'collab_app/index.html', context_dict)
+    return render(request, 'collab_app/index.html', context=context_dict)
 
 def about(request):
     """Takes url request, returns about page"""
     context_dict = {}
-    return render(request, 'collab_app/about.html', context_dict)
+    return render(request, 'collab_app/about.html', context=context_dict)
 
 def contact_us(request):
     """Takes url request, returns contact-us page"""
     context_dict = {}
-    return render(request, 'collab_app/contact-us.html', context_dict)
+    return render(request, 'collab_app/contact_us.html', context=context_dict)
 
 def sign_up(request):
     """Takes url request, returns sing-up page"""
-    pass
+    context_dict = {}
+    return render(request, 'collab_app/sign_up.html', context=context_dict)
 
 def login(request):
     """Takes url request, returns login page"""
-    pass
+    context_dict = {}
+    return render(request, 'collab_app/login.html', context=context_dict)
 
+@login_required
 def my_account(request):
     """Takes url request, returns my-account page"""
-    pass
+    context_dict = {}
+    return render(request, 'collab_app/my_account.html', context=context_dict)
 
 def general(request):
     """Takes url request, returns general page"""
-    pass
+    
 
 def universities(request):
     """Takes url request, returns universities page"""

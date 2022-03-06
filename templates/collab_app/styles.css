@@ -84,26 +84,28 @@ body {
     border-bottom: 1px solid var(--secondaryColor);
   }
   
+  /*Logo*/
   .topnav a {
     float: left;
     display: block;
-    color: black;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
     top: 50%;
   }
+
+  /*Search*/
   
   .topnav input[type=text] {
-    float: left;
+    float: inline-end;
     padding: 6px;
     margin-top: 8px;
     margin-right: 16px;
     border: 1px solid var(--secondaryColor);
     font-size: 17px;
     transform: translateY(50%);
-    width: 50%;
+    width: 65%;
   }
   
   @media screen and (max-width: 600px) {
@@ -118,7 +120,7 @@ body {
     }
     
     .topnav input[type=text] {
-      border: 1px solid #ccc;
+      border: 1px solid var(--primaryColor);
     }
   }
 

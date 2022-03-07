@@ -95,7 +95,9 @@ class Comment(models.Model):
     body = models.CharField(max_length=NAME_MAX_LENGTH)
     pinned = models.BooleanField(blank=True)
 
+    # one-to-many relationship with user
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False)
+    # one-to-many relationship with post
     post = models.ForeignKey(Page, on_delete=models.CASCADE, null=False)
 
     def __str__(self): return self.body

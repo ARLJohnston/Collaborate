@@ -4,10 +4,13 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    website = models.URLField(blank=True)
+    BIO_MAX_LENGTH = 500
+    EMAIL_MAX_LENGTH = 254
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     picture = models.ImageField(upload_to='profile_images', blank=True)
+    biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
+    # This includes email validation
+    email = models.EmailField(max_length=EMAIL_MAX_LENGTH, unique=True, null=False)
 
     def __str__(self):
         return self.user.username
@@ -16,8 +19,7 @@ class UserProfile(models.Model):
 class Forum(models.Model):  # General or universities
     NAME_MAX_LENGTH = 10
     # A forum name does not need to be unique
-    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False)
-
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False, primary_key=True)
     slug = models.SlugField(unique=True)
 
     def save(self, *args, **kwargs):
@@ -30,7 +32,7 @@ class Forum(models.Model):  # General or universities
 
 class University(models.Model):
     NAME_MAX_LENGTH = 50
-    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True)
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True, primary_key=True)
 
     # One to one relationship with university
     forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
@@ -47,7 +49,8 @@ class University(models.Model):
     class Meta:
         verbose_name_plural = 'universities'
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Category(models.Model):
@@ -66,7 +69,8 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'categories'
 
-    def __str__(self): return self.name
+    def __str__(self):
+        return self.name
 
 
 class Page(models.Model):
@@ -100,7 +104,8 @@ class Comment(models.Model):
     # one-to-many relationship with post
     post = models.ForeignKey(Page, on_delete=models.CASCADE, null=False)
 
-    def __str__(self): return self.body
+    def __str__(self):
+        return self.body
 
 
 class Like(models.Model):

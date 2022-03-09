@@ -5,7 +5,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     fields = ('user', 'email')
 
 class ForumAdmin(admin.ModelAdmin):
-    fields = ('name')
+    fields = ('name',)
 
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Forum, ForumAdmin)

@@ -11,7 +11,7 @@ class UserProfile(models.Model):
     biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
     # This includes email validation
     email = models.EmailField(max_length=EMAIL_MAX_LENGTH, unique=True, null=False)
-    #university = models.ManyToManyField(University,)
+
     def __str__(self):
         return self.user.username
 
@@ -73,16 +73,23 @@ class Category(models.Model):
         return self.name
 
 
+class ForumCategoryAssociation(models.Model):
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+
 class Page(models.Model):
+    TEXT_MAX_LENGTH = 500
+    TITLE_MAX_LENGTH = 40
     # ID attribute is automatically added by django
     # one-to-many relationship with category
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     # one-to-many relationship with user
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
-    title = models.CharField(max_length=40)
+    title = models.CharField(max_length=TITLE_MAX_LENGTH)
     image = models.ImageField(upload_to='image', blank=True)
-    text = models.CharField(max_length=500)
+    text = models.CharField(max_length=TEXT_MAX_LENGTH)
 
     slug = models.SlugField(unique=True)
 
@@ -109,16 +116,11 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    NAME_MAX_LENGTH = 128
-    number = models.IntegerField(default=0)
     # one-to-many relationship with comment
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
 
     # one-to-many relationship with post
     post = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
 
-    # One-to-one relationship with user
-    user = models.OneToOneField(UserProfile, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return "Number of likes %d" % self.number
+    # One-to-many relationship with user
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)

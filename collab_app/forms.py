@@ -1,5 +1,6 @@
 from django import forms
-from collab_app.models import UserProfile, Forum, University, Category, Page, Comment, Like
+from django.db import models
+from collab_app.models import UserProfile, Forum, University, Category, Comment, User
 
 class CommentForm(forms.ModelForm):
     class Meta:

@@ -4,8 +4,16 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Sign Up
 {% endblock %}
 
 {% block body_block %}
+
+<form id="user_form" method="post" action="{% url 'collab_app:sign_up' %}" enctype="multipart/form-data">
+
+	{% csrf_token %}
+	{{ user_form.as_p }}
+	{{ university_form.as_p }}
+
+	<input type="submit" name="submit" value="Sign-up" />
+</form>
 {% endblock %}

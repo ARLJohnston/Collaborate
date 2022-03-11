@@ -11,7 +11,7 @@ class UserProfile(models.Model):
     biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
     # This includes email validation
     email = models.EmailField(max_length=EMAIL_MAX_LENGTH, unique=True, null=False)
-    #university = models.ManyToManyField(University,)
+
     def __str__(self):
         return self.user.username
 
@@ -71,6 +71,11 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ForumCategoryAssociation(models.Model):
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Page(models.Model):

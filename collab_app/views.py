@@ -128,18 +128,18 @@ def login(request):
 
 @login_required
 def my_account(request):
-    form= UserForm(request.POST or None)
-    if form.is_valid():
-
-        firstname= form.cleaned_data.get("first_name")
-        lastname= form.cleaned_data.get("last_name")
-        emailvalue= form.cleaned_data.get("email")
-        biographyvalue = form.cleaned_data.get("biography")
-        picture=form.cleaned_data.get("picture")
-
-
-    context_dict= {'form': form, 'firstname': firstname, 'lastname':lastname,
-              'submitbutton': submitbutton, 'emailvalue':emailvalue,'biographyvalue':biographyvalue,'picture':picture}
+    if request.method == 'POST':
+        form= UserProfileForm(request.POST or None)
+        
+        if form.is_valid():
+            
+            biographyvalue = form.cleaned_data.get("biography")
+            picture=form.cleaned_data.get("picture")
+        
+        username = request.POST.get('username')
+        emailvalue = request.POST.get('email')
+        context_dict= {'form': form, 'username': username, 
+                   'emailvalue':emailvalue,'biographyvalue':biographyvalue,'picture':picture}
 
 
 
@@ -157,6 +157,41 @@ def universities(request):
     pass
 
 def show_university(request):
+    context_dict = {}
+
+
+
+    # Attempot to retrieve the category from the category_name_slug.
+
+    try:
+
+        category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
+
+
+
+        pages = Page.objects.filter(category=category) # Get all the associated pages for the specified category.
+
+
+
+        # Add the pages and category to the context dictionary.
+
+        context_dict['pages'] = pages
+
+        context_dict['category'] = category
+
+
+
+    except Category.DoesNotExist: # If error, then raise a does not exist error.
+
+        # Assign empties to the context dict.
+
+        context_dict['category'] = None
+
+        context_dict['pages'] = None
+
+
+
+    return render(request, 'rango/category.html', context=context_dict)
     """Takes url request, returns a specific university page"""
     pass
 

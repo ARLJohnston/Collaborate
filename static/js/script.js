@@ -52,7 +52,7 @@ function loadTheme(){
 	let theme = getCookie("theme");
 	let element = document.body;
 	
-	if(theme == "true"){
+	if(theme == "false"){
 		element.classList.toggle("dark-theme");
 	}
 }

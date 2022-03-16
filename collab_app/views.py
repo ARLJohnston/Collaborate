@@ -132,24 +132,23 @@ def login(request):
 @login_required
 def my_account(request):
     if request.method == 'POST':
-        user_form= UserProfileForm(request.POST or None)
+        user_form = UserProfileForm(request.POST)
 
-
-        
         if user_form.is_valid():
             
-            biographyvalue = form.cleaned_data.get("biography")
-            picture=form.cleaned_data.get("picture")
-            email=form.cleaned_data.get('email')
+            biographyvalue = user_form.cleaned_data.get("biography")
+            picture = user_form.cleaned_data.get("picture")
+            email = user_form.cleaned_data.get('email')
         
         username = request.POST.get('username')
-        context_dict= {'form': form, 'username': username, 
+        context_dict= {'form': user_form, 'username': username, 
                    'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
+    return render(request, 'collab_app/my_account.html', context=context_dict)
     else
-
+        profile_form = UserProfileForm()
 
     """Takes url request, returns my-account page"""
-    context_dict = {}
+    context_dict = {'profile_form': profile_form,}
     return render(request, 'collab_app/my_account.html', context=context_dict)
 
 def general(request):
@@ -193,7 +192,7 @@ def show_university(request,university_name_slug):
         
 
 
-    return render(request, 'rango/universities.html', context=context_dict)
+    return render(request, 'collab_app/universities.html', context=context_dict)
     """Takes url request, returns a specific university page"""
     pass
 
@@ -253,7 +252,7 @@ def show_category(request,category_name_slug):
 
 
 
-    return render(request, 'rango/category.html', context=context_dict)
+    return render(request, 'collab_app/category.html', context=context_dict)
     """Takes url request, returns a specific university page"""
     
 
@@ -283,7 +282,7 @@ def add_category(request,university_name_slug):
                 category.name = category
                 page.views = 0
                 page.save()
-                return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category_name_slug}))
+                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
             
         else:
             print(form.errors)
@@ -297,22 +296,50 @@ def add_category(request,university_name_slug):
             form.save(commit=True)
             # Now that the category is saved, we could confirm this.
             # For now, just redirect the user back to the index view.
-            return redirect('/rango/')
+            return redirect('/collab_app/')
         else:
             print(form.errors)
-    return render(request, 'rango/add_category.html', {'form': form})
+    return render(request, 'collab_app/add_category.html', {'form': form})
     """Takes url request, returns the creation page for new categories"""
     pass
 
 def show_page(request):
 
 
+
     """Takes url request, returns a specific page"""
     pass
 
-def add_page(request):
+def add_page(request,category_name_slug):
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except Category.DoesNotExist:
+        category = None
+    
+    # You cannot add a page to a Category that does not exist...
+    if category is None:
+        return redirect('/collab_app/')
+    
+    form = PageForm()
+    
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+
+            if category:
+                page = form.save(commit=False)
+                page.category = category
+                page.views = 0
+                page.save()
+                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
+            
+        else:
+            print(form.errors)
+    
+    context_dict = {'form': form, 'category': category}
+    return render(request, 'collab_app/add_page.html', context=context_dict)
 
     """Takes url request, returns the creation page for new pages"""
-    pass
+    

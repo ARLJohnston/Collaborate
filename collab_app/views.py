@@ -29,9 +29,10 @@ def sign_up(request):
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(request.POST)
         university_form = University_form(request.POST)
+        profile_form = UserProfileForm(request.POST)
 
         # If the two forms are valid...
-        if user_form.is_valid()  and university_form.is_valid():
+        if user_form.is_valid()  and university_form.is_valid() and profile_form.is_valid():
             # Save the user's form data to the database.
             user = user_form.save()
 
@@ -58,6 +59,8 @@ def sign_up(request):
             # Now we save the UserProfile model instance.
             user.save()
             university.save()
+            profile.save()
+
             # Update our variable to indicate that the template
             # registration was successful.
             registered = True
@@ -111,7 +114,7 @@ def login(request):
                 return redirect(reverse('collab_app:index'))
             else:
                 # An inactive account was used - no logging in!
-                return HttpResponse("Your COllaborate account is disabled.")
+                return HttpResponse("Your Collaborate account is disabled.")
         else:
             # Bad login details were provided. So we can't log the user in.
             print(f"Invalid login details: {username}, {password}")
@@ -129,18 +132,20 @@ def login(request):
 @login_required
 def my_account(request):
     if request.method == 'POST':
-        form= UserProfileForm(request.POST or None)
+        user_form= UserProfileForm(request.POST or None)
+
+
         
-        if form.is_valid():
+        if user_form.is_valid():
             
             biographyvalue = form.cleaned_data.get("biography")
             picture=form.cleaned_data.get("picture")
+            email=form.cleaned_data.get('email')
         
         username = request.POST.get('username')
-        emailvalue = request.POST.get('email')
         context_dict= {'form': form, 'username': username, 
-                   'emailvalue':emailvalue,'biographyvalue':biographyvalue,'picture':picture}
-
+                   'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
+    else
 
 
     """Takes url request, returns my-account page"""
@@ -301,11 +306,13 @@ def add_category(request,university_name_slug):
 
 def show_page(request):
 
+
     """Takes url request, returns a specific page"""
     pass
 
 def add_page(request):
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+
     """Takes url request, returns the creation page for new pages"""
     pass

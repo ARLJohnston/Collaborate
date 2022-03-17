@@ -156,7 +156,64 @@ def universities(request):
     """Takes url request, returns universities page"""
     pass
 
-def show_university(request):
+def show_university(request,university_name_slug):
+    context_dict = {}
+
+
+
+    # Attempot to retrieve the category from the category_name_slug.
+
+    try:
+
+        university = University.objects.get(slug=university_name_slug)
+
+        
+
+
+
+        # Add the pages and category to the context dictionary.
+
+        context_dict['university'] = university
+
+        
+
+
+
+    except Category.DoesNotExist: # If error, then raise a does not exist error.
+
+        # Assign empties to the context dict.
+
+        context_dict['university'] = None
+
+        
+
+
+    return render(request, 'rango/universities.html', context=context_dict)
+    """Takes url request, returns a specific university page"""
+    pass
+
+def add_university(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("User not authenticated.")
+    form = UniversityForm()
+    # A HTTP POST?
+    if request.method == 'POST':
+        form = UniversityForm(request.POST)
+        # Have we been provided with a valid form?
+        if form.is_valid():
+            # Save the new category to the database.
+            
+            form.save(commit=True)
+            # Now that the category is saved, we could confirm this.
+            # For now, just redirect the user back to the index view.
+            return redirect('/collab_app/')
+        else:
+            print(form.errors)
+    return render(request, 'collab_app/add_university.html', {'form': form})
+    """Takes url request, returns the creation page for new universities"""
+    pass
+
+def show_category(request,category_name_slug):
     context_dict = {}
 
 
@@ -193,30 +250,8 @@ def show_university(request):
 
     return render(request, 'rango/category.html', context=context_dict)
     """Takes url request, returns a specific university page"""
-    pass
+    
 
-def add_university(request):
-    if not request.user.is_authenticated:
-        return HttpResponse("User not authenticated.")
-    form = UniversityForm()
-    # A HTTP POST?
-    if request.method == 'POST':
-        form = UniversityForm(request.POST)
-        # Have we been provided with a valid form?
-        if form.is_valid():
-            # Save the new category to the database.
-            
-            form.save(commit=True)
-            # Now that the category is saved, we could confirm this.
-            # For now, just redirect the user back to the index view.
-            return redirect('/collab_app/')
-        else:
-            print(form.errors)
-    return render(request, 'collab_app/add_university.html', {'form': form})
-    """Takes url request, returns the creation page for new universities"""
-    pass
-
-def show_category(request,category_name_slug):
     context_dict = {}
     
 
@@ -265,6 +300,7 @@ def add_category(request,university_name_slug):
     pass
 
 def show_page(request):
+
     """Takes url request, returns a specific page"""
     pass
 

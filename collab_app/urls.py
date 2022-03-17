@@ -24,14 +24,17 @@ urlpatterns = [
 
     # University pages
     path('universities/', views.universities, name='universities'),
+    
     path('universities/add_university/', views.add_university,
-          name='show_university'),
+          name='add_university'),
     path('universities/<slug:university_name_slug>/',
           views.show_university, name='show_university'),
+
     path('universities/<slug:university_name_slug>/add_category/',
           views.add_category, name='add_university_category'),
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/',
           views.show_category, name='show_university_category'),
+
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/add_page',
           views.add_page, name='add_university_page'),
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/<slug:page_name_slug>/',

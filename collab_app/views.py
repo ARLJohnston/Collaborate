@@ -144,7 +144,7 @@ def my_account(request):
         context_dict= {'form': user_form, 'username': username, 
                    'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
     return render(request, 'collab_app/my_account.html', context=context_dict)
-    else
+    else:
         profile_form = UserProfileForm()
 
     """Takes url request, returns my-account page"""
@@ -222,7 +222,7 @@ def show_category(request,category_name_slug):
 
 
 
-    # Attempot to retrieve the category from the category_name_slug.
+    # Attempt to retrieve the category from the category_name_slug.
 
     try:
 

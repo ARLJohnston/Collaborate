@@ -14,28 +14,25 @@ def populate():
         ]
 
     categories_pages = [
-        {'title':'University',
+        {'title':'Categories',
          'comment':'catergories'},
          ]
 
-    forms_pages = [
-        {'title':'Forms', 'comment':'forms'}
+    comment_pages = [
+        {'topic': 'How to do better in Computer Science',
+         'comment':'Just looking for more stackoverflow'}        
         ]
-
-    
-    def add_page(cat, title, url, views=0):
-        p = Page.objects.get_or_create(category=cat, title=title)[0]
-        p.url=url
-        p.views=views +1
-        p.save()
-        return p
 
 
     # Print out the categories we have added.
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
             print(f'- {c}: {p}')
-
+            
+def add_cat(name):
+    c = Category.objects.get_or_create(name=name)[0]    
+    c.save()
+    return c
 
 if __name__ == '__main__':
     print('Starting population script...')

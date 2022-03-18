@@ -149,23 +149,23 @@ def my_account(request):
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
     user_form = UserForm()
-    if request.method == 'POST':
-        user_form = UserProfileForm(request.POST)
-        if user_form.is_valid():
+        if request.method == 'POST':
+            user_form = UserProfileForm(request.POST)
+            if user_form.is_valid():
+                
+                biographyvalue = user_form.cleaned_data.get("biography")
+                picture = user_form.cleaned_data.get("picture")
+                email = user_form.cleaned_data.get('email')
             
-            biographyvalue = user_form.cleaned_data.get("biography")
-            picture = user_form.cleaned_data.get("picture")
-            email = user_form.cleaned_data.get('email')
-        
-        username = request.POST.get('username')
-        context_dict= {'form': user_form, 'username': username, 
-                   'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
+            username = request.POST.get('username')
+            context_dict= {'form': user_form, 'username': username, 
+                       'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
 
-        return render(request, 'collab_app/my_account.html', context=context_dict)
-    else:
-    """Takes url request, returns my-account page"""
-        context_dict = {'user_form': user_form,}
-        return render(request, 'collab_app/my_account.html', context=context_dict)
+            return render(request, 'collab_app/my_account.html', context=context_dict)
+        else:
+        """Takes url request, returns my-account page"""
+            context_dict = {'user_form': user_form,}
+            return render(request, 'collab_app/my_account.html', context=context_dict)
 
 def general(request):
     """Takes url request, returns general page"""

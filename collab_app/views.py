@@ -29,9 +29,10 @@ def sign_up(request):
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(request.POST)
         university_form = University_form(request.POST)
+        profile_form = UserProfileForm(request.POST)
 
         # If the two forms are valid...
-        if user_form.is_valid()  and university_form.is_valid():
+        if user_form.is_valid()  and university_form.is_valid() and profile_form.is_valid():
             # Save the user's form data to the database.
             user = user_form.save()
 
@@ -58,6 +59,8 @@ def sign_up(request):
             # Now we save the UserProfile model instance.
             user.save()
             university.save()
+            profile.save()
+
             # Update our variable to indicate that the template
             # registration was successful.
             registered = True
@@ -111,7 +114,7 @@ def login(request):
                 return redirect(reverse('collab_app:index'))
             else:
                 # An inactive account was used - no logging in!
-                return HttpResponse("Your COllaborate account is disabled.")
+                return HttpResponse("Your Collaborate account is disabled.")
         else:
             # Bad login details were provided. So we can't log the user in.
             print(f"Invalid login details: {username}, {password}")
@@ -129,22 +132,23 @@ def login(request):
 @login_required
 def my_account(request):
     if request.method == 'POST':
-        form= UserProfileForm(request.POST or None)
-        
-        if form.is_valid():
+        user_form = UserProfileForm(request.POST)
+
+        if user_form.is_valid():
             
-            biographyvalue = form.cleaned_data.get("biography")
-            picture=form.cleaned_data.get("picture")
+            biographyvalue = user_form.cleaned_data.get("biography")
+            picture = user_form.cleaned_data.get("picture")
+            email = user_form.cleaned_data.get('email')
         
         username = request.POST.get('username')
-        emailvalue = request.POST.get('email')
-        context_dict= {'form': form, 'username': username, 
-                   'emailvalue':emailvalue,'biographyvalue':biographyvalue,'picture':picture}
-
-
+        context_dict= {'form': user_form, 'username': username, 
+                   'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
+    return render(request, 'collab_app/my_account.html', context=context_dict)
+    else
+        profile_form = UserProfileForm()
 
     """Takes url request, returns my-account page"""
-    context_dict = {}
+    context_dict = {'profile_form': profile_form,}
     return render(request, 'collab_app/my_account.html', context=context_dict)
 
 def general(request):
@@ -188,7 +192,7 @@ def show_university(request,university_name_slug):
         
 
 
-    return render(request, 'rango/universities.html', context=context_dict)
+    return render(request, 'collab_app/universities.html', context=context_dict)
     """Takes url request, returns a specific university page"""
     pass
 
@@ -248,7 +252,7 @@ def show_category(request,category_name_slug):
 
 
 
-    return render(request, 'rango/category.html', context=context_dict)
+    return render(request, 'collab_app/category.html', context=context_dict)
     """Takes url request, returns a specific university page"""
     
 
@@ -278,7 +282,7 @@ def add_category(request,university_name_slug):
                 category.name = category
                 page.views = 0
                 page.save()
-                return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category_name_slug}))
+                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
             
         else:
             print(form.errors)
@@ -292,20 +296,50 @@ def add_category(request,university_name_slug):
             form.save(commit=True)
             # Now that the category is saved, we could confirm this.
             # For now, just redirect the user back to the index view.
-            return redirect('/rango/')
+            return redirect('/collab_app/')
         else:
             print(form.errors)
-    return render(request, 'rango/add_category.html', {'form': form})
+    return render(request, 'collab_app/add_category.html', {'form': form})
     """Takes url request, returns the creation page for new categories"""
     pass
 
 def show_page(request):
 
+
+
     """Takes url request, returns a specific page"""
     pass
 
-def add_page(request):
+def add_page(request,category_name_slug):
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except Category.DoesNotExist:
+        category = None
+    
+    # You cannot add a page to a Category that does not exist...
+    if category is None:
+        return redirect('/collab_app/')
+    
+    form = PageForm()
+    
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+
+            if category:
+                page = form.save(commit=False)
+                page.category = category
+                page.views = 0
+                page.save()
+                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
+            
+        else:
+            print(form.errors)
+    
+    context_dict = {'form': form, 'category': category}
+    return render(request, 'collab_app/add_page.html', context=context_dict)
+
     """Takes url request, returns the creation page for new pages"""
-    pass
+    

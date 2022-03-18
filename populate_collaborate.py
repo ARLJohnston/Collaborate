@@ -22,13 +22,18 @@ def populate():
         {'topic': 'How to do better in Computer Science',
          'comment':'Just looking for more stackoverflow'}        
         ]
-
+    
 
     # Print out the categories we have added.
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
             print(f'- {c}: {p}')
-            
+ 
+def add_page(cat, title):
+    p = Page.objects.get_or_create(category=cat, title=title)[0]   
+    p.save()
+    return p
+  
 def add_cat(name):
     c = Category.objects.get_or_create(name=name)[0]    
     c.save()

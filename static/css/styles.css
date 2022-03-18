@@ -1,3 +1,8 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
     --primaryColor: #ffffff;
     --secondaryColor: #282a36;
@@ -123,5 +128,33 @@ body {
       border: 1px solid var(--primaryColor);
     }
   }
-
   
+  #link-box{
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 10%;
+    border-top: 1px solid var(--secondaryColor);
+  }
+
+  @media screen and (min-width: 768px) {
+      #link-box{
+        display: inline-block;
+        color: var(--secondaryColor);
+        float: right;
+        width: 10%;
+        padding: 10px;
+        margin-right: 20px;
+
+        /*Box styling*/
+        border-radius: 25px;
+        width: 10%;
+        height: 10%;
+        border: 2px solid var(--secondaryColor);
+
+        position:fixed;
+        top: 50%;
+        right: 10px;
+      }
+  }

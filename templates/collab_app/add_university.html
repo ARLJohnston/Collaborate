@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% extends 'collab_app/base.html' %}
+
+{% load staticfiles %}
+
+{% block title_block %}
+	Add University
+{% endblock %}
+
+{% block body_block %}
+	<h1>Add a University</h1>
+	<div>
+		{% if user.is_authenticated %}
+		<form id="university_form" method="post" action="{% url 'collab_app:add_university' %}">
+			
+		{% csrf_token %}
+		{{ form.as_p }}
+
+		<input type="submit" name="submit" value="Add University" />
+
+		</form>
+	</div>
+{% endblock %}

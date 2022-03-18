@@ -4,15 +4,16 @@
 {% load staticfiles %}
 
 {% block title_block %}
+	Login
 {% endblock %}
 
 {% block body_block %}
 	<form id="login_form" method="post" action="{% url 'collab_app:login' %}">
 
 	{% csrf_token %}
-	Username: <input type="text" placeholder="Username" />
+		<input type="text" placeholder="Username" />
 	<br />
-	Password: <input type="password" placeholder="Password" />
+		<input type="password" placeholder="Password" />
 	<br />
 	<input type="submit" value="Log-in" />
 </form>

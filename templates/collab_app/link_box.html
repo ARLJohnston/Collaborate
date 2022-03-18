@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+
+<div id="link-box">
+    {% if links %}
+        <ul>
+            {% for link in links %}
+                <li>
+                    <a href="{{ link.url }}">{{ link.title }}</a>
+                </li>
+        </ul>
+    {% else %}
+        <ul>
+            <li><a href="{% url 'collab_app:index' %}">Home page</a>
+            <li><a href="{% url 'collab_app:sign_up' %}">Sign-up</a></li>
+		    <li><a href="{% url 'collab_app:login' %}">Login</a></li>
+		    <li><a href="{% url 'collab_app:about' %}">About</a></li>
+		    <li><a href="{% url 'collab_app:contact_us' %}">Contact us</a></li>
+		    <li><a href="{% url 'collab_app:general' %}">General</a></li>
+        </ul>
+</div>

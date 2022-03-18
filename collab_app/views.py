@@ -1,5 +1,19 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from rango.forms import CategoryForm
+from django.shortcuts import redirect
+from django.urls import reverse
+from rango.forms import PageForm
+from rango.forms import UserForm, UserProfileForm, UniversityForm
+from django.contrib.auth import authenticate, login, logout
+from datetime import datetime
+from django.http import HttpResponse
+from rango.models import Category
+from rango.models import Page
+from django.contrib.auth.decorators import login_required
+
+
+
 
 def index(request):
     """Takes url request, returns Http response."""
@@ -131,9 +145,11 @@ def login(request):
 
 @login_required
 def my_account(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("User not authenticated.")
+    user_form = UserForm()
     if request.method == 'POST':
         user_form = UserProfileForm(request.POST)
-
         if user_form.is_valid():
             
             biographyvalue = user_form.cleaned_data.get("biography")
@@ -143,13 +159,12 @@ def my_account(request):
         username = request.POST.get('username')
         context_dict= {'form': user_form, 'username': username, 
                    'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
-    return render(request, 'collab_app/my_account.html', context=context_dict)
-    else:
-        profile_form = UserProfileForm()
 
+        return render(request, 'collab_app/my_account.html', context=context_dict)
+    else:
     """Takes url request, returns my-account page"""
-    context_dict = {'profile_form': profile_form,}
-    return render(request, 'collab_app/my_account.html', context=context_dict)
+        context_dict = {'user_form': user_form,}
+        return render(request, 'collab_app/my_account.html', context=context_dict)
 
 def general(request):
     """Takes url request, returns general page"""

@@ -4,12 +4,13 @@ from rango.forms import CategoryForm
 from django.shortcuts import redirect
 from django.urls import reverse
 from rango.forms import PageForm
-from rango.forms import UserForm, UserProfileForm, UniversityForm
+from rango.forms import UserForm, UserProfileForm, UniversityForm, PageForm
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 from django.http import HttpResponse
 from rango.models import Category
 from rango.models import Page
+from rango.models import University
 from django.contrib.auth.decorators import login_required
 
 

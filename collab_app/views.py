@@ -181,7 +181,7 @@ def show_university(request,university_name_slug):
 
 
 
-    # Attempot to retrieve the category from the category_name_slug.
+    # Attempt to retrieve the category from the category_name_slug.
 
     try:
 

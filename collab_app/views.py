@@ -235,19 +235,22 @@ def add_category(request,university_name_slug):
     
     form = CategoryForm()
     
-    if request.method == 'POST':
+    """
+    DUPLICATE: is this meant to be here?
+
+     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
 
             if university:
                 category  = form.save(commit=False)
                 category.name = category
-                page.views = 0
+                page.views = 0 <---- page is not defined, is this meant to be here?
                 page.save()
                 return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
 
         else:
-            print(form.errors)
+            print(form.errors) """
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)

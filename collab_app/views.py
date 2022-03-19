@@ -120,8 +120,6 @@ def login(request):
     # No context variables to pass to the template system, hence the
     # blank dictionary object...
         return render(request, 'collab_app/login.html')
-    #context_dict = {}
-    #return render(request, 'collab_app/login.html', context=context_dict)
 
 @login_required
 def my_account(request): 
@@ -154,12 +152,16 @@ def my_account(request):
 
 def general(request):
     """Takes url request, returns general page"""
-    pass
+    context_dict = {}
+
+    return render('collab_app/general.html', context=context_dict)
     
 
 def universities(request):
     """Takes url request, returns universities page"""
-    pass
+    context_dict = {}
+
+    return render('collab_app/universities.html', context=context_dict)
 
 def show_university(request,university_name_slug):
     """Takes url request, returns a specific university page"""

@@ -5,9 +5,7 @@ from django.http import HttpResponse
 from django.urls import reverse
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm
-
-
-
+from collab_app.models import University, Category, Page
 
 def index(request):
     """Takes url request, returns Http response."""
@@ -25,18 +23,16 @@ def contact_us(request):
     return render(request, 'collab_app/contact_us.html', context=context_dict)
 
 def sign_up(request):
-    # A boolean value for telling the template
-    # whether the registration was successful.
-    # Set to False initially. Code changes value to
-    # True when registration succeeds.
-    registered = False
+    """Takes url request, returns sing-up page"""
+
+    is_registered = False
     
     # If it's a HTTP POST, we're interested in processing form data.
     if request.method == 'POST':
         # Attempt to grab information from the raw form information.
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(request.POST)
-        university_form = University_form(request.POST)
+        university_form = UniversityForm(request.POST)
         profile_form = UserProfileForm(request.POST)
 
         # If the two forms are valid...
@@ -71,7 +67,7 @@ def sign_up(request):
 
             # Update our variable to indicate that the template
             # registration was successful.
-            registered = True
+            is_registered = True
 
         else:
             # Invalid form or forms - mistakes or something else?
@@ -86,30 +82,20 @@ def sign_up(request):
         profile_form = UserProfileForm()
         university_form = UniversityForm()
 
+    context_dict = {'user_form': user_form,'university_form' : university_form, 'registered': is_registered}
 
-
-    return render(request, 'collab_app/sign_up.html',   context = {'user_form': user_form,'university_form' : university_form, 'registered': registered})
-    """Takes url request, returns sing-up page"""
-
-    #context_dict = {}
-    #return render(request, 'collab_app/sign_up.html', context=context_dict)
+    return render(request, 'collab_app/sign_up.html', context=context_dict)
 
 def login(request):
     """Takes url request, returns login page"""
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
-        # Gather the username and password provided by the user.
-        # This information is obtained from the login form.
-        # We use request.POST.get('<variable>') as opposed
-        # to request.POST['<variable>'], because the
-        # request.POST.get('<variable>') returns None if the
-        # value does not exist, while request.POST['<variable>']
-        # will raise a KeyError exception.
+
         username = request.POST.get('username')
         password = request.POST.get('password')
         # Use Django's machinery to attempt to see if the username/password
         # combination is valid - a User object is returned if it is.
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password) # Checks if valid password.
         # If we have a User object, the details are correct.
         # If None (Python's way of representing the absence of a value), no user
         # with matching credentials was found.
@@ -138,12 +124,17 @@ def login(request):
     #return render(request, 'collab_app/login.html', context=context_dict)
 
 @login_required
-def my_account(request):
+def my_account(request): 
+    """Takes url request, returns my-account page"""
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+
     user_form = UserForm()
+
     if request.method == 'POST':
         user_form = UserProfileForm(request.POST)
+
         if user_form.is_valid():
             
             biographyvalue = user_form.cleaned_data.get("biography")
@@ -155,67 +146,51 @@ def my_account(request):
                     'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
 
         return render(request, 'collab_app/my_account.html', context=context_dict)
+
     else:
-        """Takes url request, returns my-account page"""
         context_dict = {'user_form': user_form,}
+
         return render(request, 'collab_app/my_account.html', context=context_dict)
 
 def general(request):
     """Takes url request, returns general page"""
+    pass
     
 
 def universities(request):
-
     """Takes url request, returns universities page"""
     pass
 
 def show_university(request,university_name_slug):
+    """Takes url request, returns a specific university page"""
+
     context_dict = {}
 
-
-
-    # Attempt to retrieve the category from the category_name_slug.
-
     try:
-
+        # Attempt to retrieve the category from the category_name_slug.
         university = University.objects.get(slug=university_name_slug)
 
-        
-
-
-
         # Add the pages and category to the context dictionary.
-
         context_dict['university'] = university
 
-        
-
-
-
-    except Category.DoesNotExist: # If error, then raise a does not exist error.
-
+    except Category.DoesNotExist:
         # Assign empties to the context dict.
-
         context_dict['university'] = None
 
-        
-
-
     return render(request, 'collab_app/universities.html', context=context_dict)
-    """Takes url request, returns a specific university page"""
-    pass
 
 def add_university(request):
+    """Takes url request, returns the creation page for new universities"""
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
     form = UniversityForm()
-    # A HTTP POST?
-    if request.method == 'POST':
+    
+    if request.method == 'POST':# A HTTP POST?
         form = UniversityForm(request.POST)
-        # Have we been provided with a valid form?
-        if form.is_valid():
+        
+        if form.is_valid():# Have we been provided with a valid form?
             # Save the new category to the database.
-            
             form.save(commit=True)
             # Now that the category is saved, we could confirm this.
             # For now, just redirect the user back to the index view.
@@ -223,61 +198,39 @@ def add_university(request):
         else:
             print(form.errors)
     return render(request, 'collab_app/add_university.html', {'form': form})
-    """Takes url request, returns the creation page for new universities"""
-    pass
 
 def show_category(request,category_name_slug):
+    """Takes url request, returns a specific university page"""
+
     context_dict = {}
 
-
-
-    # Attempt to retrieve the category from the category_name_slug.
-
     try:
-
         category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
-
-
-
         pages = Page.objects.filter(category=category) # Get all the associated pages for the specified category.
-
-
-
         # Add the pages and category to the context dictionary.
-
         context_dict['pages'] = pages
-
         context_dict['category'] = category
 
-
-
-    except Category.DoesNotExist: # If error, then raise a does not exist error.
-
+    except Category.DoesNotExist:
         # Assign empties to the context dict.
-
         context_dict['category'] = None
-
         context_dict['pages'] = None
 
-
-
     return render(request, 'collab_app/category.html', context=context_dict)
-    """Takes url request, returns a specific university page"""
-    
-
-    context_dict = {}
-    
 
 def add_category(request,university_name_slug):
+    """Takes url request, returns the creation page for new categories"""
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+
     try:
         university = University.objects.get(slug=university_name_slug)
+
     except University.DoesNotExist:
         university = None
     
-    # You cannot  a Category that does not exist...
-    if university is None:
+    if university is None:# You cannot  a Category that does not exist...
         return redirect('/collab_app/')
     
     form = CategoryForm()
@@ -292,43 +245,42 @@ def add_category(request,university_name_slug):
                 page.views = 0
                 page.save()
                 return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
-            
+
         else:
             print(form.errors)
-    # A HTTP POST?
-    if request.method == 'POST':
+
+    if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
-        # Have we been provided with a valid form?
-        if form.is_valid():
-            # Save the new category to the database.
-            
-            form.save(commit=True)
+        
+        if form.is_valid(): # Have we been provided with a valid form?
+            form.save(commit=True) # Save the new category to the database.
             # Now that the category is saved, we could confirm this.
             # For now, just redirect the user back to the index view.
             return redirect('/collab_app/')
+
         else:
             print(form.errors)
+
     return render(request, 'collab_app/add_category.html', {'form': form})
-    """Takes url request, returns the creation page for new categories"""
-    pass
 
 def show_page(request):
-
-
-
     """Takes url request, returns a specific page"""
     pass
 
 def add_page(request,category_name_slug):
+    """Takes url request, returns the creation page for new pages"""
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+
     try:
         category = Category.objects.get(slug=category_name_slug)
+
     except Category.DoesNotExist:
         category = None
     
-    # You cannot add a page to a Category that does not exist...
-    if category is None:
+    
+    if category is None: # You cannot add a page to a Category that does not exist...
         return redirect('/collab_app/')
     
     form = PageForm()
@@ -348,7 +300,8 @@ def add_page(request,category_name_slug):
             print(form.errors)
     
     context_dict = {'form': form, 'category': category}
+
     return render(request, 'collab_app/add_page.html', context=context_dict)
 
-    """Takes url request, returns the creation page for new pages"""
+    
     

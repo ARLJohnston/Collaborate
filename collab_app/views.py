@@ -127,26 +127,29 @@ def my_account(request):
 
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
-
+    
+    username = request.user.username
     user_form = UserForm()
+    user_profile_form = UserProfileForm()
 
     if request.method == 'POST':
-        user_form = UserProfileForm(request.POST)
+        user_profile_form = UserProfileForm(request.POST)
+        user_form = UserForm(request.POST)
 
-        if user_form.is_valid():
+        if user_profile_form.is_valid() and user_form.is_valid():
             
-            biographyvalue = user_form.cleaned_data.get("biography")
-            picture = user_form.cleaned_data.get("picture")
-            email = user_form.cleaned_data.get('email')
+            biographyvalue = user_profile_form.cleaned_data.get("biography")
+            picture = user_profile_form.cleaned_data.get("picture")
+            email = user_profile_form.cleaned_data.get('email')
         
-        username = request.POST.get('username')
-        context_dict= {'form': user_form, 'username': username, 
-                    'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
+            username = user_form.cleaned_data.get('username')
+            context_dict= {'user_form': user_form,'user_profile_form': user_profile_form, 'username': username, 
+                        'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
 
         return render(request, 'collab_app/my_account.html', context=context_dict)
 
     else:
-        context_dict = {'user_form': user_form,}
+        context_dict = {'user_form': user_form,'user_profile_form': user_profile_form}
 
         return render(request, 'collab_app/my_account.html', context=context_dict)
 

@@ -138,6 +138,8 @@ def my_account(request):
     if request.method == 'POST':
         user_profile_form = UserProfileForm(request.POST)
         user_form = UserForm(request.POST)
+        user_form.save()
+        user_profile_form.save()
 
         if user_profile_form.is_valid() and user_form.is_valid():
             
@@ -275,9 +277,7 @@ def add_category(request,university_name_slug):
     return render(request, 'collab_app/add_category.html', {'form': form})
 
 def show_page(request):
-    """Takes url request, returns a specific page"""
-    pass
-
+     
 def add_page(request,category_name_slug):
     """Takes url request, returns the creation page for new pages"""
 

@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm
-from collab_app.models import University, Category, Page
+from collab_app.models import UserProfile, University, Category, Page
 
 def index(request):
     """Takes url request, returns Http response."""
@@ -129,8 +130,10 @@ def my_account(request):
         return HttpResponse("User not authenticated.")
     
     username = request.user.username
-    user_form = UserForm()
-    user_profile_form = UserProfileForm()
+    user_profile = UserProfile.objects.get(email=username)
+    user_data = User.objects.get(username=username)
+    user_form = UserForm(instance=user_data)
+    user_profile_form = UserProfileForm(instance=user_profile)
 
     if request.method == 'POST':
         user_profile_form = UserProfileForm(request.POST)

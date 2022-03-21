@@ -277,6 +277,7 @@ def add_category(request,university_name_slug):
     return render(request, 'collab_app/add_category.html', {'form': form})
 
 def show_page(request):
+	pass
      
 def add_page(request,category_name_slug):
     """Takes url request, returns the creation page for new pages"""

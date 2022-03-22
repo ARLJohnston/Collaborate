@@ -4,8 +4,29 @@
 {% load staticfiles %}
 
 {% block title_block %}
-	Show Category
+	{% if category %}
+		{{ category.name }}
+	{% else %}
+		Unknown Category
+	{% endif %}
 {% endblock %}
 
 {% block body_block %}
+{% if category %}
+	<h1>{{ category.name }}</h1>
+	{% if pages %}
+	<ul>
+		{% for page in pages %}
+		<li><a href="{{ page.url }}">{{ page.title }}</a>
+		{% if page.image == None %}
+			{{ page.text|truncatewords:50 }}
+		{% else %}
+			{{ page.image }}
+		{% endif %}
+		</li>
+		{% endfor %}
+	</ul>	
+	{% else %}
+		There are currently no posts.
+	{% endif %}
 {% endblock %}

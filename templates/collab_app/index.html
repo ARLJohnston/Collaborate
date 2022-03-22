@@ -15,6 +15,29 @@
 		<li><a href="{% url 'collab_app:contact_us' %}">Contact us</a></li>
 		<li><a href="{% url 'collab_app:general' %}">General</a></li>
 		<li><a href="{% url 'collab_app:universities' %}">Unis</a></li>
-		<li><a href="{% url 'collab_app:add_university' %}">Add University</li>
+		<li><a href="{% url 'collab_app:add_university' %}">Add University</a></li>
 	</div>
+
+	<div>
+		<h1>Collaborate</h1>
+	</div>
+
+	<div>
+		<form action="{% url 'collab_app:login' %}">
+			<input type="submit" value="Log in">
+		</form>
+	</div>
+	
+	<div>
+		<form action="{% url 'collab_app:sign_up' %}">
+			<input type="submit" value="Sign-up">
+		</form>
+	</div>
+
+	<div>
+		<form action="{% url 'collab_app:general' %}">
+			<input type="submit" value="Continue to main site">
+		</form>
+	</div>
+	
 {% endblock %}

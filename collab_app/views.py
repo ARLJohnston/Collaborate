@@ -304,7 +304,6 @@ def add_page(request,category_name_slug):
             if category:
                 page = form.save(commit=False)
                 page.category = category
-                page.views = 0
                 page.save()
                 return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
             

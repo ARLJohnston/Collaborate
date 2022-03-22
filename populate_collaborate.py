@@ -22,7 +22,14 @@ def populate():
         {'topic': 'How to do better in Computer Science',
          'comment':'Just looking for more stackoverflow'}        
         ]
-    
+    user_pages = [
+        {'topic': 'How to do better in Computer Science',
+         'comment':'Just looking for more stackoverflow'}        
+        ]
+    forum_pages = [
+        {'topic': 'How to do better in Computer Science',
+         'comment':'Just looking for more stackoverflow'}        
+        ]
 
     # Print out the categories we have added.
     for c in Category.objects.all():
@@ -38,6 +45,11 @@ def add_cat(name):
     c = Category.objects.get_or_create(name=name)[0]    
     c.save()
     return c
+
+def add_like(comment)
+    l = Like.objects.get_or_create(comment=comment)[0] 
+    l.save()
+    return l
 
 if __name__ == '__main__':
     print('Starting population script...')

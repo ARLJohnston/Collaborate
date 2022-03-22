@@ -17,3 +17,7 @@ Hosting site: https://www.pythonanywhere.com/user/namang/
 - View restriction on logged on users
 - Add university
 
+## Scheduling
+- 24/03/2022 - AJAX likes, recent cookies to have been created (Alistair)
+- 25/03/2022 - Summary Sheet to be created
+- 25/03/2022 - PythonAnywhere to work

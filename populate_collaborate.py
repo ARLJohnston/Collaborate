@@ -4,7 +4,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 
 import django
 django.setup()
-from collab_app import Category, Page
+from collab_app.models import Category, Page, Like
 
 
 def populate():

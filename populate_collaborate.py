@@ -19,16 +19,15 @@ def populate():
          ]
 
     comment_pages = [
-        {'topic': 'How to do better in Computer Science',
-         'comment':'Just looking for more stackoverflow'}        
+        {'topic': 'Comment',
+         'comment':'Put down ur idea and thought here.'}        
         ]
     user_pages = [
-        {'topic': 'How to do better in Computer Science',
-         'comment':'Just looking for more stackoverflow'}        
+        {'topic': 'UserProfile'}        
         ]
     forum_pages = [
-        {'topic': 'How to do better in Computer Science',
-         'comment':'Just looking for more stackoverflow'}        
+        {'topic': 'Forum',
+         'comment':'Start your discussing here.'}        
         ]
 
     # Print out the categories we have added.

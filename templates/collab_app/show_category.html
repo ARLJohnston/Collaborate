@@ -14,6 +14,7 @@
 {% block body_block %}
 {% if category %}
 	<h1>{{ category.name }}</h1>
+	<div>
 	{% if pages %}
 	<ul>
 		{% for page in pages %}
@@ -29,4 +30,5 @@
 	{% else %}
 		There are currently no posts.
 	{% endif %}
+	</div>
 {% endblock %}

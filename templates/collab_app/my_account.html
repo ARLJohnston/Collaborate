@@ -8,4 +8,14 @@
 {% endblock %}
 
 {% block body_block %}
+	<h1>My Account</h1>
+	<div>
+	<form method="POST" action="{% url 'collab_app:my_account' %}">
+		{% csrf_token %}
+		{{ user_form.as_p }}
+		{{ university_form.as_p }}
+
+		<input type="submit" name="submit" value="Save Changes" />
+	</form>
+	</div>
 {% endblock %}

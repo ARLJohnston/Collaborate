@@ -21,7 +21,7 @@
 		{% if page.image == None %}
 			{{ page.text|truncatewords:50 }}
 		{% else %}
-			{{ page.image }}
+			<img src="{{ page.image.url }}" alt="image" />
 		{% endif %}
 		</li>
 		{% endfor %}

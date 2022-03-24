@@ -1,4 +1,4 @@
-function setThemeCookie(cookieName, cookieValue, expiry){
+function setCookie(cookieName, cookieValue, expiry){
 	const d = new Date();
 	d.setTime(d.getTime() + (expiry * 24 * 60 * 60 * 1000));
  	let expires = "expires="+d.toUTCString();
@@ -25,34 +25,58 @@ function getCookie(cookieName){
 	return "";
 }
 
-function validateCookie(defaultVal = true){
-	let cookie = getCookie("theme");
+function validateCookie(cookieName, defaultVal = true){
+	let cookie = getCookie(cookieName);
 	if(cookie == ""){
-		setThemeCookie("theme", defaultVal, 365);
+		setCookie(cookieName, defaultVal, 365);
 	}
 }
 
 function changeTheme(){
-	validateCookie();
+	validateCookie("theme");
 	let theme = getCookie("theme");
 	let element = document.body;
 
 	element.classList.toggle("dark-theme");
 
 	if(theme == "true"){
-		setThemeCookie("theme", "false", 365);
+		setCookie("theme", "false", 365);
 	}
 	else{
-		setThemeCookie("theme", "true", 365);
+		setCookie("theme", "true", 365);
 	}
 }
 
 function loadTheme(){
-	validateCookie();
+	validateCookie("theme");
 	let theme = getCookie("theme");
 	let element = document.body;
 	
 	if(theme == "false"){
 		element.classList.toggle("dark-theme");
 	}
+}
+
+function addPageToRecent(page = "collab_app:index"){
+	validateCookie("recent", page);
+	let recent = getCookie("recent");
+
+	let recentPages = recent.split(",");
+
+	if(!recentPages.includes(page)){
+		setCookie("recent", recent + "," + page, 365);
+	}
+}
+
+function getRecentPages(){
+	let recent = getCookie("recent");
+	let recentPages = recent.split(";");
+
+	return recentPages;
+}
+
+function onLoad(page){
+	//Scripts that run when the page loads
+	loadTheme();
+	addPageToRecent(page);
 }

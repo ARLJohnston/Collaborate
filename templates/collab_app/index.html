@@ -16,6 +16,18 @@
 		<li><a href="{% url 'collab_app:general' %}">General</a></li>
 		<li><a href="{% url 'collab_app:universities' %}">Unis</a></li>
 		<li><a href="{% url 'collab_app:add_university' %}">Add University</a></li>
+
+		<li><a href="{% url page %}">{{ page }}</a></li>
+	</div>
+
+	<div>
+	{% if recent %}
+		<ul>
+			{% for element in recent %}
+				<li><a href="{% url element %}">{{ element }}</a></li>
+			{% endfor %}
+		</ul>
+		{% endif %}
 	</div>
 
 	<div>
@@ -38,10 +50,6 @@
 		<form action="{% url 'collab_app:general' %}">
 			<input type="submit" value="Continue to main site">
 		</form>
-	</div>
-
-	<div>
-		{% include 'collab_app/link_box.html' %}
 	</div>
 	
 {% endblock %}

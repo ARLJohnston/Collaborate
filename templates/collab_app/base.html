@@ -11,9 +11,11 @@
     </title>
 </head>
 
-<body onload="loadTheme()">
+<body onload="onLoad('{{ page }}')">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <script src="{% static 'js/script.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+
 
     <div class="topnav">
         <a href="{% url 'collab_app:index'%}">
@@ -25,7 +27,7 @@
             <a href="{% url 'collab_app:my_account'%}">
                 <img src="{% static 'images/cog.png' %}" alt="My-Account" height="50" width="50">
             </a>
-	    {% endif %}
+	{% endif %}
 
         <label class="switch">
             <input type="checkbox" onclick="changeTheme()">

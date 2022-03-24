@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-from django.urls import reverse
+from django.urls import reverse, resolve
 from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm
@@ -11,20 +11,44 @@ from collab_app.models import UserProfile, University, Category, Page
 def index(request):
     """Takes url request, returns Http response."""
     context_dict = {}
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
     return render(request, 'collab_app/index.html', context=context_dict)
 
 def about(request):
     """Takes url request, returns about page"""
     context_dict = {}
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
+    recent = request.COOKIES.get("recent")
+    print(recent)
+    recent_list = []
+    if(recent):
+        for page in recent.split(","):
+            recent_list += page
     return render(request, 'collab_app/about.html', context=context_dict)
 
 def contact_us(request):
     """Takes url request, returns contact-us page"""
     context_dict = {}
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
     return render(request, 'collab_app/contact_us.html', context=context_dict)
 
 def sign_up(request):
-    """Takes url request, returns sing-up page"""
+    """Takes url request, returns sign-up page"""
 
     is_registered = False
     
@@ -74,7 +98,9 @@ def sign_up(request):
             # Invalid form or forms - mistakes or something else?
             # Print problems to the terminal.
             print(user_form.errors, profile_form.errors)
+
     else:
+
         # Not a HTTP POST, so we render our form using two ModelForm instances.
         # These forms will be blank, ready for user input.
         user_form = UserForm()
@@ -83,9 +109,15 @@ def sign_up(request):
 
     context_dict = {'user_form': user_form,'university_form' : university_form, 'registered': is_registered}
 
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
     return render(request, 'collab_app/sign_up.html', context=context_dict)
 
-def login_view(request):
+def login(request):
     """Takes url request, returns login page"""
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
@@ -116,16 +148,12 @@ def login_view(request):
     # The request is not a HTTP POST, so display the login form.
     # This scenario would most likely be a HTTP GET.
     else:
+    # No context variables to pass to the template system, hence the
+    # blank dictionary object...
         return render(request, 'collab_app/login.html')
 
-def general(request):
-    """Takes url request, returns general page"""
-    context_dict = {}
-
-    return render(request, 'collab_app/general.html', context=context_dict)
-
-
-def my_account(request, account_name_slug): 
+@login_required
+def my_account(request): 
     """Takes url request, returns my-account page"""
 
     if not request.user.is_authenticated:
@@ -153,28 +181,68 @@ def my_account(request, account_name_slug):
             context_dict= {'user_form': user_form,'user_profile_form': user_profile_form, 'username': username, 
                         'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
 
+            context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+            recent = request.COOKIES.get("recent")
+            recent_list = []
+            if(recent):
+                for page in recent.split(";"):
+                    recent_list += page
+
         return render(request, 'collab_app/my_account.html', context=context_dict)
 
     else:
         context_dict = {'user_form': user_form,'user_profile_form': user_profile_form}
+        
+        context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+        recent = request.COOKIES.get("recent")
+        if(recent):
+            context_dict["recent"] = recent.split(",")
 
         return render(request, 'collab_app/my_account.html', context=context_dict)
+
+def general(request):
+    """Takes url request, returns general page"""
+    context_dict = {}
+    
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
+    return render('collab_app/general.html', context=context_dict)
+    
 
 def universities(request):
     """Takes url request, returns universities page"""
     context_dict = {}
+    
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
 
-    return render(request, 'collab_app/universities.html', context=context_dict)
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
+    return render('collab_app/universities.html', context=context_dict)
 
 def show_university(request,university_name_slug):
     """Takes url request, returns a specific university page"""
 
     context_dict = {}
+    
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
     try:
-        # Attempt to retrieve the university from the university_name_slug.
+        # Attempt to retrieve the category from the category_name_slug.
         university = University.objects.get(slug=university_name_slug)
 
-        # Add the pages and university to the context dictionary.
+        # Add the pages and category to the context dictionary.
         context_dict['university'] = university
 
     except Category.DoesNotExist:
@@ -207,6 +275,12 @@ def show_category(request,category_name_slug):
     """Takes url request, returns a specific university page"""
 
     context_dict = {}
+    
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
 
     try:
         category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.

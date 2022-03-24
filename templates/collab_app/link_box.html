@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 
 {% load staticfiles %}
-{% load collab_template_tags %}
 
 <div id="link-box">
-    {% if links %}
-        <ul>
-            {% for link in links %}
-                <li>
-                    <a href="{% url 'collab_app:show_general_category' slug={{ link.slug }}/">{{ link.title }}</a>
-                </li>
-            {% endfor %}
+    {% if recent %}                                                                      
+        <ul>                                                                               
+        {% for element in recent %} 
+            <li><a href="{% url element %}">{{ element }}</a></li>
+        {% endfor %}
         </ul>
     {% else %}
         <ul>

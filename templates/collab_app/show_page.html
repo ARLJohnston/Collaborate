@@ -8,4 +8,14 @@
 {% endblock %}
 
 {% block body_block %}
+	<strong id="like_count">{{ page.likes }}</strong>Likes
+	{% if user.is_authenticated %}
+		<button id="like_btn"
+					 data-pageid="{{ page.id }}"
+			 		 class="btn btn-primary btn-sm"
+		 			 type="button">
+			<span data-feather="thumbs-up"></span>
+			Like Page
+		</button>
+	{% endif %}
 {% endblock %}

@@ -4,11 +4,12 @@ from collab_app import views
 app_name = 'collab_app'
 urlpatterns = [
     path('', views.index, name='index'),
+    path('index/', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('contact_us/', views.contact_us, name='contact_us'),
 
     path('sign_up/', views.sign_up, name='sign_up'),
-    path('login/', views.login_view, name='login'),
+    path('login/', views.login, name='login'),
     path('<slug:account_name_slug>/', views.my_account, name='my_account'),
 
     # General pages

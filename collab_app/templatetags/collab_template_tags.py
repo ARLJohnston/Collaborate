@@ -6,4 +6,4 @@ register = template.Library()
 @register.inclusion_tag('collab_app/link_box.html')
 def get_links():
     """WARNING: THIS IS A TEMPORARY METHOD"""
-    return {'links': Category.objects.all()[:1]}
+    return {'links': Category.objects.all()[:5]}

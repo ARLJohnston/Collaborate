@@ -74,9 +74,7 @@ def sign_up(request):
             # Invalid form or forms - mistakes or something else?
             # Print problems to the terminal.
             print(user_form.errors, profile_form.errors)
-
     else:
-
         # Not a HTTP POST, so we render our form using two ModelForm instances.
         # These forms will be blank, ready for user input.
         user_form = UserForm()
@@ -87,7 +85,7 @@ def sign_up(request):
 
     return render(request, 'collab_app/sign_up.html', context=context_dict)
 
-def login(request):
+def login_view(request):
     """Takes url request, returns login page"""
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
@@ -118,12 +116,16 @@ def login(request):
     # The request is not a HTTP POST, so display the login form.
     # This scenario would most likely be a HTTP GET.
     else:
-    # No context variables to pass to the template system, hence the
-    # blank dictionary object...
         return render(request, 'collab_app/login.html')
 
-@login_required
-def my_account(request): 
+def general(request):
+    """Takes url request, returns general page"""
+    context_dict = {}
+
+    return render(request, 'collab_app/general.html', context=context_dict)
+
+
+def my_account(request, account_name_slug): 
     """Takes url request, returns my-account page"""
 
     if not request.user.is_authenticated:
@@ -158,29 +160,21 @@ def my_account(request):
 
         return render(request, 'collab_app/my_account.html', context=context_dict)
 
-def general(request):
-    """Takes url request, returns general page"""
-    context_dict = {}
-
-    return render('collab_app/general.html', context=context_dict)
-    
-
 def universities(request):
     """Takes url request, returns universities page"""
     context_dict = {}
 
-    return render('collab_app/universities.html', context=context_dict)
+    return render(request, 'collab_app/universities.html', context=context_dict)
 
 def show_university(request,university_name_slug):
     """Takes url request, returns a specific university page"""
 
     context_dict = {}
-
     try:
-        # Attempt to retrieve the category from the category_name_slug.
+        # Attempt to retrieve the university from the university_name_slug.
         university = University.objects.get(slug=university_name_slug)
 
-        # Add the pages and category to the context dictionary.
+        # Add the pages and university to the context dictionary.
         context_dict['university'] = university
 
     except Category.DoesNotExist:

@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.urls import reverse, resolve
+from django.views import View
+from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm
@@ -343,6 +345,24 @@ def add_category(request,university_name_slug):
             print(form.errors)
 
     return render(request, 'collab_app/add_category.html', {'form': form})
+
+class like_page_view(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        page_id = request.GET['page_id']
+
+        try:
+            page = Page.objects.get(id=int(page_id))
+        except Page.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+
+        page.likes = page.likes + 1
+        page.save()
+
+        return HttpResponse(page.likes)
+
 
 def show_page(request):
 	pass

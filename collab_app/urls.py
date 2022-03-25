@@ -39,5 +39,9 @@ urlpatterns = [
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/add_page',
           views.add_page, name='add_university_page'),
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/<slug:page_name_slug>/',
-          views.show_page, name='show_university_page')
+          views.show_page, name='show_university_page'),
+
+    # Like AJAX request
+    path('like_page/', views.like_page_view.as_view(), name='like_page'),
 ]
+

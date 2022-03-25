@@ -3,7 +3,7 @@ $(document).ready(function() {
 		var catepageIdVar;
 		catepageIdVar = $(this).attr('data-pageid');
 
-		$.get('/rango/like_page/',
+		$.get('/collab_app/like_page/',
 			{'page_id': catepageIdVar},
 			function(data) {
 				$('#like_count').html(data);

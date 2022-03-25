@@ -24,9 +24,8 @@
             <img src="{% static 'images/logo.png' %}" alt="Collaborate" height="50" width="50">
         </a>
         
-        <input type="text" placeholder="search">
         <form action="{% url 'collab_app:search_bar' %}" method="get">
-            <input type="text" name="search"/>
+            <input type="text" name="search" placeholder = "search"/>
             <button type="submit">Search</button>
         </form>
         {% if user.is_authenticated %}

@@ -25,6 +25,10 @@
         </a>
         
         <input type="text" placeholder="search">
+        <form action="{% url 'collab_app:search_bar' %}" method="get">
+            <input type="text" name="search"/>
+            <button type="submit">Search</button>
+        </form>
         {% if user.is_authenticated %}
             <a href="{% url 'collab_app:my_account'%}">
                 <img src="{% static 'images/cog.png' %}" alt="My-Account" height="50" width="50">

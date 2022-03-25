@@ -154,6 +154,15 @@ def login(request):
     # blank dictionary object...
         return render(request, 'collab_app/login.html')
 
+def my_account_redirect(request):
+    """Takes url request, redirects to slug account"""
+    if not request.user.is_authenticated:
+        return HttpResponse("User not authenticated.")
+
+    else:
+        username = str(request.user.username)
+        return redirect(f'/my_account/{username}')
+
 @login_required
 def my_account(request): 
     """Takes url request, returns my-account page"""
@@ -214,9 +223,9 @@ def general(request):
     if(recent):
         context_dict["recent"] = recent.split(",")
 
-    return render('collab_app/general.html', context=context_dict)
+    return render(request, 'collab_app/general.html', context=context_dict)
     
-
+@login_required
 def universities(request):
     """Takes url request, returns universities page"""
     context_dict = {}
@@ -227,7 +236,7 @@ def universities(request):
     if(recent):
         context_dict["recent"] = recent.split(",")
 
-    return render('collab_app/universities.html', context=context_dict)
+    return render(request, 'collab_app/universities.html', context=context_dict)
 
 def show_university(request,university_name_slug):
     """Takes url request, returns a specific university page"""
@@ -402,5 +411,9 @@ def add_page(request,category_name_slug):
 
     return render(request, 'collab_app/add_page.html', context=context_dict)
 
-    
+def search_bar(request):
+    if request.method == 'GET':
+        search = request.GET.get('search')
+        page = Page.objects.all().filter(title=search)
+        return render(request, 'search_result.html', {'page':page})
     

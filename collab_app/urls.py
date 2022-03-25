@@ -7,10 +7,12 @@ urlpatterns = [
     path('index/', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('contact_us/', views.contact_us, name='contact_us'),
+    path('search_bar/', views.search_bar, name="search_bar"),
 
     path('sign_up/', views.sign_up, name='sign_up'),
     path('login/', views.login, name='login'),
-    path('<slug:account_name_slug>/', views.my_account, name='my_account'),
+    path('my_account/', views.my_account, name='my_account'),
+    path('my_account/<slug:account_name_slug>/', views.my_account),
 
     # General pages
     path('general/', views.general, name='general'),

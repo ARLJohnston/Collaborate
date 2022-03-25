@@ -17,12 +17,12 @@ def populate():
 
     university_categories = [
         {'title': 'Categories',
-         'description': 'catergories'}
+         'description': 'categories'}
     ]
 
     general_categories = [
         {'title': 'Categories',
-         'description': 'catergories'}
+         'description': 'categories'}
     ]
 
     general_pages = [
@@ -54,7 +54,8 @@ def populate():
         f = add_forum(forum)
         if forum == 'General':
             for c in forum_data['Category']:
-                cat = add_cat(c, f)
+                print(forum_data)
+                cat = add_cat(forum_data, f)
                 for p in forum_data['Page']:
                     post = add_page(cat, p['title'])
                     for com in forum_data['Comment']:

@@ -119,7 +119,7 @@ def sign_up(request):
 
     return render(request, 'collab_app/sign_up.html', context=context_dict)
 
-def login(request):
+def login_view(request):
     """Takes url request, returns login page"""
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
@@ -160,7 +160,7 @@ def my_account_redirect(request):
         return HttpResponse("User not authenticated.")
 
     else:
-        username = str(request.user.username)
+        username = request.user.username
         return redirect(f'/my_account/{username}')
 
 @login_required
@@ -415,5 +415,5 @@ def search_bar(request):
     if request.method == 'GET':
         search = request.GET.get('search')
         page = Page.objects.all().filter(title=search)
-        return render(request, 'search_result.html', {'page':page})
+        return render(request, 'collab_app/search_result.html', {'page':page})
     

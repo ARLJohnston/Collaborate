@@ -10,7 +10,7 @@ urlpatterns = [
     path('search_bar/', views.search_bar, name="search_bar"),
 
     path('sign_up/', views.sign_up, name='sign_up'),
-    path('login/', views.login, name='login'),
+    path('login/', views.login_view, name='login'),
     path('my_account/', views.my_account, name='my_account'),
     path('my_account/<slug:account_name_slug>/', views.my_account),
 

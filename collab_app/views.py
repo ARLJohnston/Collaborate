@@ -79,7 +79,7 @@ def sign_up(request):
             profile = profile_form.save(commit=False)
             profile.user = user
             university = university_form.save(commit=False)
-            university.user = user
+            university.user.set(user);
             
             # Did the user provide a profile picture?
             # If so, we need to get it from the input form and

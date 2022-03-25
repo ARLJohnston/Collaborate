@@ -182,8 +182,6 @@ def my_account(request):
 
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
-    print('lol')
-    print(request.user)
     username = request.user.username
     
     user_data = User.objects.get(username=username)
@@ -194,16 +192,17 @@ def my_account(request):
     if request.method == 'POST':
         user_profile_form = UserProfileForm(request.POST)
         user_form = UserForm(request.POST)
-        user_form.save()
-        user_profile_form.save()
+        user_form.save(request.POST)
+        user_profile_form.save(request.POST)
 
         if user_profile_form.is_valid() and user_form.is_valid():
             
             biographyvalue = user_profile_form.cleaned_data.get("biography")
             picture = user_profile_form.cleaned_data.get("picture")
             email = user_profile_form.cleaned_data.get('email')
-        
+            
             username = user_form.cleaned_data.get('username')
+            print(username, biographyvalue, email)
             context_dict= {'user_form': user_form,'user_profile_form': user_profile_form, 'username': username, 
                         'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
 

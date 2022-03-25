@@ -1,6 +1,7 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class UserProfile(models.Model):
@@ -11,6 +12,7 @@ class UserProfile(models.Model):
     biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
     # This includes email validation
     email = models.EmailField(max_length=EMAIL_MAX_LENGTH, unique=True, null=False)
+
 
     def __str__(self):
         return self.user.username
@@ -91,7 +93,7 @@ class Page(models.Model):
     image = models.ImageField(upload_to='image', blank=True)
     text = models.CharField(max_length=TEXT_MAX_LENGTH)
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, null=False)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -99,6 +101,9 @@ class Page(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('page_detail', kwargs={'slug': self.slug})
 
 
 class Comment(models.Model):

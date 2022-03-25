@@ -10,13 +10,14 @@
 <strong>THIS IS IMPORTANT PROBABLY!</strong>
 
 {% if post %}
-    <h1>FOUND!</h1>
+<h1>Found {{ post|length }} posts.</h1>
     {% for i in post %}
         <h2><a href="collab_app/{{ i.slug }}">{{ i.title }}</a></h2>
     {% endfor %}
 {% else %}
-    <h1>NOTHING FOUND BITCH!</h1>
+    <h1>No results found</h1>
 {% endif %}
 
 {% block body_block %}
+{% include 'collab_app/link_box.html' %}
 {% endblock %}

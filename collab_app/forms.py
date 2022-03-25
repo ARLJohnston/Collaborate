@@ -57,6 +57,7 @@ class UniversityForm(forms.ModelForm):
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
     email = forms.EmailField(widget=forms.EmailInput())
+    biography = forms.CharField(widget=forms.TextInput())
 
     class Meta:
         model = User

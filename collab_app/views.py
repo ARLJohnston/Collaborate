@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.urls import reverse, resolve
+from django.views import View
+from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm

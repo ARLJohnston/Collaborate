@@ -20,8 +20,6 @@ urlpatterns = [
     path('general/', views.general, name='general'),
     path('general/<slug:category_name_slug>', views.show_category,
           name='show_general_category'),
-    path('general/<slug:category_name_slug>/add_page/', views.add_page,
-          name='add_general_page'),
     path('general/<slug:category_name_slug>/<slug:page_name_slug>/',
           views.show_page, name='show_general_page'),
 

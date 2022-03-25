@@ -56,15 +56,15 @@ class UniversityForm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
-    email = forms.EmailField(widget=forms.EmailInput())
-    biography = forms.CharField(widget=forms.TextInput())
+    #email = forms.EmailField(widget=forms.EmailInput())
+    #biography = forms.CharField(widget=forms.TextInput())
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'biography',)
+        fields = ('username', 'password', )
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('picture', 'biography','email',)
+        fields = ('picture', 'biography','email', )

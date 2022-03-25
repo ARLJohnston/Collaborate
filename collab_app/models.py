@@ -37,7 +37,7 @@ class University(models.Model):
     name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True, primary_key=True)
 
     # One to one relationship with university
-    forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
+    #forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
 
     # Many-to-many relationship with user
     user = models.ManyToManyField(UserProfile)

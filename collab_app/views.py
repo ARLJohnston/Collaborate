@@ -7,7 +7,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
-from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm
+from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
 from collab_app.models import UserProfile, University, Category, Page
 
 def index(request):
@@ -59,11 +59,11 @@ def sign_up(request):
         # Attempt to grab information from the raw form information.
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(request.POST)
-        university_form = UniversityForm(request.POST)
         profile_form = UserProfileForm(request.POST)
+        university_form = UniversityForm(request.POST)
 
         # If the two forms are valid...
-        if user_form.is_valid()  and university_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid()  and  profile_form.is_valid() and  university_form.is_valid():
             # Save the user's form data to the database.
             user = user_form.save()
 
@@ -78,23 +78,30 @@ def sign_up(request):
             # until we're ready to avoid integrity problems.
             profile = profile_form.save(commit=False)
             profile.user = user
-            university = university_form.save(commit=False)
-            university.user.set(user);
+
+            
+            
+            
             
             # Did the user provide a profile picture?
             # If so, we need to get it from the input form and
             #put it in the UserProfile model.
             if 'picture' in request.FILES:
-                user.picture = request.FILES['picture']
+                profile.picture = request.FILES['picture']
             
             # Now we save the UserProfile model instance.
-            user.save()
-            university.save()
+            
+            
             profile.save()
+            university = university_form.save(commit=False)
+            university.save()
+            university.user.add(profile) 
+
 
             # Update our variable to indicate that the template
             # registration was successful.
             is_registered = True
+            print(university,user,profile)
 
         else:
             # Invalid form or forms - mistakes or something else?
@@ -109,8 +116,8 @@ def sign_up(request):
         profile_form = UserProfileForm()
         university_form = UniversityForm()
 
-    context_dict = {'user_form': user_form,'university_form' : university_form, 'registered': is_registered}
-
+    context_dict = {'user_form': user_form,'university_form' : university_form, 'profile_form': profile_form,  'registered': is_registered}
+    #context_dict = {'user_form': user_form, 'profile_form': profile_form,  'registered': is_registered}
     context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
 
     recent = request.COOKIES.get("recent")
@@ -175,10 +182,12 @@ def my_account(request):
 
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
-    
+    print('lol')
+    print(request.user)
     username = request.user.username
-    user_profile = UserProfile.objects.get(email=username)
+    
     user_data = User.objects.get(username=username)
+    user_profile = UserProfile.objects.get(user=user_data)
     user_form = UserForm(instance=user_data)
     user_profile_form = UserProfileForm(instance=user_profile)
 
@@ -379,8 +388,21 @@ class like_page_view(View):
         return HttpResponse(page.likes)
 
 
-def show_page(request):
-	pass
+def show_page(request,page_name_slug):
+    context_dict = {}
+    comment_form = CommentForm();
+    comments =  Comment.Objects.get(page = page_name_slug)
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form is valid;
+            comment_form.save()
+    
+    context_dict['comment_form']  = comment_form  
+    context_dict['comments'] = comments
+    return render(request, 'collab_app/show_page.html', context_dict)
+
+
+	
      
 def add_page(request,category_name_slug):
     """Takes url request, returns the creation page for new pages"""

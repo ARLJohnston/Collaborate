@@ -122,6 +122,12 @@ def sign_up(request):
 def login_view(request):
     """Takes url request, returns login page"""
     # If the request is a HTTP POST, try to pull out the relevant information.
+    context_dict = {}
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
+
     if request.method == 'POST':
 
         username = request.POST.get('username')
@@ -152,7 +158,7 @@ def login_view(request):
     else:
     # No context variables to pass to the template system, hence the
     # blank dictionary object...
-        return render(request, 'collab_app/login.html')
+        return render(request, 'collab_app/login.html', context_dict)
 
 def my_account_redirect(request):
     """Takes url request, redirects to slug account"""

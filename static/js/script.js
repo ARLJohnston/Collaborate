@@ -58,13 +58,15 @@ function loadTheme(){
 }
 
 function addPageToRecent(page = "collab_app:index"){
-	validateCookie("recent", page);
-	let recent = getCookie("recent");
+	if(page != " not found. "){
+		validateCookie("recent", page);
+		let recent = getCookie("recent");
 
-	let recentPages = recent.split(",");
+		let recentPages = recent.split(",");
 
-	if(!recentPages.includes(page)){
-		setCookie("recent", recent + "," + page, 365);
+		if(!recentPages.includes(page)){
+			setCookie("recent", recent + "," + page, 365);
+		}
 	}
 }
 

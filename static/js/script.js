@@ -80,5 +80,7 @@ function getRecentPages(){
 function onLoad(page){
 	//Scripts that run when the page loads
 	loadTheme();
-	addPageToRecent(page);
+	if(page.contains("collab_app:")){
+		addPageToRecent(page);
+	}
 }

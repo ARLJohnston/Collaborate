@@ -394,7 +394,7 @@ def show_page(request,page_name_slug):
     comments =  Comment.Objects.get(page = page_name_slug)
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
-        if comment_form is valid;
+        if comment_form.is_valid():
             comment_form.save()
     
     context_dict['comment_form']  = comment_form  

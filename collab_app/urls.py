@@ -13,11 +13,11 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('my_account/', views.my_account, name='my_account'),
     path('my_account/<slug:account_name_slug>/', views.my_account),
+    path('add_category', views.add_category, name='add_category'),
+    path('add_page', views.add_page, name='add_page'),
 
     # General pages
     path('general/', views.general, name='general'),
-    path('general/add_category/', views.add_category,
-          name='add_general_category'),
     path('general/<slug:category_name_slug>', views.show_category,
           name='show_general_category'),
     path('general/<slug:category_name_slug>/add_page/', views.add_page,
@@ -32,14 +32,10 @@ urlpatterns = [
           name='add_university'),
     path('universities/<slug:university_name_slug>/',
           views.show_university, name='show_university'),
-
-    path('universities/<slug:university_name_slug>/add_category/',
-          views.add_category, name='add_university_category'),
+    
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/',
           views.show_category, name='show_university_category'),
 
-    path('universities/<slug:university_name_slug>/<slug:category_name_slug>/add_page',
-          views.add_page, name='add_university_page'),
     path('universities/<slug:university_name_slug>/<slug:category_name_slug>/<slug:page_name_slug>/',
           views.show_page, name='show_university_page'),
 

@@ -1,117 +1,131 @@
-import os
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE',
-                      'collaborate.settings')
-
-import django
-
-django.setup()
-from collab_app.models import Category, Page, Comment, Like, University, Forum
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
+from django.urls import reverse
 
 
-def populate():
-    universities = [
-        {'title': 'University Page',
-         'description': 'Welcome to university pages'}
-    ]
-
-    university_categories = [
-        {'title': 'Categories',
-         'description': 'catergories'}
-    ]
-
-    general_categories = [
-        {'title': 'Categories',
-         'description': 'catergories'}
-    ]
-
-    general_pages = [
-        {'title': 'How to do better in Computer Science',
-         'description': 'Just looking for more stackoverflow',
-         }]
-
-    university_pages = [
-        {'title': 'How to do better in Computer Science',
-         'description': 'Just looking for more stackoverflow'}
-    ]
-    general_comments = [
-        {'post': 'How to do better in Computer Science',
-         'body': 'Just looking for more stackoverflow'}
-    ]
-
-    university_comments = [
-        {'title': 'How to do better in Computer Science',
-         'description': 'Just looking for more stackoverflow'}
-    ]
-
-    # Print out the categories we have added.
-    forums = {'General': {'Category': general_categories, 'Page': general_pages, 'Comment': general_comments},
-             'Universities': {'University': universities, 'Category': university_categories, 'Page': university_pages,
-                              'Comment': university_comments}
-             }
-
-    for forum, forum_data in forums.items():
-        f = add_forum(forum)
-        if forum == 'General':
-            for c in forum_data['Category']:
-                cat = add_cat(c, f)
-                for p in forum_data['Page']:
-                    post = add_page(cat, p['title'])
-                    for com in forum_data['Comment']:
-                        add_comment(post, com['body'])
-
-        elif forum == 'Universities':
-            for u in forum_data['University']:
-                uni = add_university(u)
-                for c in forum_data['Category']:
-                    cat = add_cat(c, f)
-                    for p in forum_data['Page']:
-                        post = add_page(cat, p['title'])
-                        for com in forum_data['Comment']:
-                            add_comment(post, com['body'])
-
-    '''
-    for c in Category.objects.all():
-        for p in Page.objects.filter(category=c):
-            print(f'- {c}: {p}')'''
+class UserProfile(models.Model):
+    BIO_MAX_LENGTH = 500
+    EMAIL_MAX_LENGTH = 254
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+    biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
+    # This includes email validation
+    email = models.EmailField(max_length=EMAIL_MAX_LENGTH, unique=True, null=False)
 
 
-def add_page(cat, title):
-    p = Page.objects.get_or_create(category=cat, title=title)[0]
-    p.save()
-    return p
+    def __str__(self):
+        return self.user.username
 
 
-def add_cat(name, forum):
-    c = Category.objects.get_or_create(name=name, forum=forum)[0]
-    c.save()
-    return c
+class Forum(models.Model):  # General or universities
+    NAME_MAX_LENGTH = 10
+    # A forum name does not need to be unique
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False, primary_key=True)
+    slug = models.SlugField(unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Forum, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 
-def add_like(comment):
-    l = Like.objects.get_or_create(comment=comment)[0]
-    l.save()
-    return l
+class University(models.Model):
+    NAME_MAX_LENGTH = 50
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True, primary_key=True)
+
+    # One to one relationship with university
+    forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
+
+    # Many-to-many relationship with user
+    user = models.ManyToManyField(UserProfile)
+
+    slug = models.SlugField(unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(University, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = 'universities'
+
+    def __str__(self):
+        return self.name
 
 
-def add_comment(post, body):
-    l = Comment.objects.get_or_create(post=post, body=body)[0]
-    l.save()
-    return l
+class Category(models.Model):
+    NAME_MAX_LENGTH = 10
+    # A category name does not need to be unique
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False)
+    # Gets foreign key from Forum
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+
+    slug = models.SlugField(unique=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = 'categories'
+
+    def __str__(self):
+        return self.name
 
 
-def add_university(name):
-    l = University.objects.get_or_create(name=name)[0]
-    l.save()
-    return l
+class ForumCategoryAssociation(models.Model):
+    forum = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
-def add_forum(name):
-    l = Forum.objects.get_or_create(name=name)[0]
-    l.save()
-    return l
+class Page(models.Model):
+    TEXT_MAX_LENGTH = 500
+    TITLE_MAX_LENGTH = 40
+    # ID attribute is automatically added by django
+    # one-to-many relationship with category
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    # one-to-many relationship with user
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    title = models.CharField(max_length=TITLE_MAX_LENGTH)
+    image = models.ImageField(upload_to='image', blank=True)
+    text = models.CharField(max_length=TEXT_MAX_LENGTH)
+
+    slug = models.SlugField(unique=True, null=False)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Page, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('page_detail', kwargs={'slug': self.slug})
 
 
-if __name__ == '__main__':
-    print('Starting population script...')
-    populate()
+class Comment(models.Model):
+    NAME_MAX_LENGTH = 300
+    body = models.CharField(max_length=NAME_MAX_LENGTH)
+    pinned = models.BooleanField(blank=True)
+
+    # one-to-many relationship with user
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False)
+    # one-to-many relationship with post
+    post = models.ForeignKey(Page, on_delete=models.CASCADE, null=False)
+
+    def __str__(self):
+        return self.body
+
+
+class Like(models.Model):
+    # one-to-many relationship with comment
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+
+    # one-to-many relationship with post
+    post = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
+
+    # One-to-many relationship with user
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)

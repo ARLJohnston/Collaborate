@@ -331,6 +331,8 @@ def show_category(request,category_name_slug):
         context_dict['pages'] = None
 
     #styling_function(request, False, context_dict)
+    print("---")
+    print("---")
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
@@ -450,6 +452,30 @@ def add_page(request,category_name_slug):
     context_dict = {'form': form, 'category': category}
 
     return render(request, 'collab_app/add_page.html', context=context_dict)
+
+def add_comment(request, page_name_slug):
+    try: #Get page that the comment is for
+        page = Page.objects.get(sulg=page_name_slug)
+
+    except Page.DoesNotExist:
+        page = None
+
+    form = CommentForm()
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            if page:
+                comment = form.save(commit=False)
+                comment.page = page
+                comment.save()
+                return redirect(reverse('collab_app:show_page', kwargs={'page_name_slug': page_name_slug}))
+        else:
+            print(form.errors)
+    context_dict = {'form': form, 'page':page}
+
+    return render(request, 'collab_app/add_comment.html', context=context_dict)
 
 def search_bar(request):
     if request.method == 'GET':

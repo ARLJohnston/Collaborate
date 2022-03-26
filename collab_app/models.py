@@ -92,6 +92,7 @@ class Page(models.Model):
     title = models.CharField(max_length=TITLE_MAX_LENGTH)
     image = models.ImageField(upload_to='image', blank=True)
     text = models.CharField(max_length=TEXT_MAX_LENGTH)
+    url = models.URLField()
 
     slug = models.SlugField(unique=True, null=False)
 

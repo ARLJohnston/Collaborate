@@ -30,6 +30,19 @@
 	{% else %}
 		There are currently no posts.
 	{% endif %}
+	<!-- Allow user to create page -->
+	<h2>Add a page</h2>
+	<div>
+		<form id="add_page_form" method="post" action="{% url 'collab_app:add_page' category.slug %}">
+			{% csrf_token %}
+			{% for field in form.visible_fields %}
+				{{ field.errors }}
+				{{ field.help_text }}
+				{{ field }}
+			{% endfor %}
+			<input type="submit" name="submit" value="Post"/>
+		</form>
+	</div>
 	</div>
 	{% endif %}
 {% endblock %}

@@ -403,6 +403,7 @@ class like_page_view(View):
 
 
 def show_page(request,page_name_slug):
+    print(context_dict["pages"][0].url)
     context_dict = {}
     comment_form = CommentForm();
     comments =  Comment.Objects.get(page = page_name_slug)
@@ -418,7 +419,7 @@ def show_page(request,page_name_slug):
 
 	
      
-def add_page(request,category_name_slug):
+def add_page(request, category_name_slug):
     """Takes url request, returns the creation page for new pages"""
 
     if not request.user.is_authenticated:
@@ -443,6 +444,7 @@ def add_page(request,category_name_slug):
             if category:
                 page = form.save(commit=False)
                 page.category = category
+                page.url = "www.google.co.uk" 
                 page.save()
                 return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
             

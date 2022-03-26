@@ -8,5 +8,17 @@
 {% endblock %}
 
 {% block body_block %}
+{% if universities %}
+	<ul>
+	{% for university in universities %}
+	<li>
+		<a href="{% url 'collab_app:show_university' university.slug%}">{{ university.name }}</a>
+		</li>
+	{% endfor %}
+{% else %}
+<strong>You are not part of a university</strong>
+{% endif %}
+
+
 {% include 'collab_app/link_box.html' %}
 {% endblock %}

@@ -240,13 +240,16 @@ def general(request):
 @login_required
 def universities(request):
     """Takes url request, returns universities page"""
-    username = request.user.username
-    user_data = User.objects.get(username=username)
-    user_profile = UserProfile.objects.get(user=user_data)
-    user_university = University.objects.get(user=user_profile)
-    universities = University.objects.all().filter(user = user_profile)
     context_dict = {}
-    context_dict = {universities: 'universities'}
+    try:
+        username = request.user.username
+        user_data = User.objects.get(username=username)
+        user_profile = UserProfile.objects.get(user=user_data)
+        user_university = University.objects.get(user=user_profile)
+        universities = University.objects.all().filter(user = user_profile)
+        context_dict['universities'] = universities
+    except: #No associated universities
+        context_dict['universities'] = None
 
     
     context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
@@ -262,11 +265,6 @@ def show_university(request,university_name_slug):
 
     context_dict = {}
     
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
 
     try:
         # Attempt to retrieve the category from the category_name_slug.
@@ -279,7 +277,7 @@ def show_university(request,university_name_slug):
         # Assign empties to the context dict.
         context_dict['university'] = None
 
-    return render(request, 'collab_app/universities.html', context=context_dict)
+    return render(request, 'collab_app/show_university.html', context=context_dict)
 
 def add_university(request):
     """Takes url request, returns the creation page for new universities"""
@@ -306,7 +304,6 @@ def show_category(request,category_name_slug):
 
     context_dict = {}
     
-
     try:
         category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
         pages = Page.objects.filter(category=category) # Get all the associated pages for the specified category.

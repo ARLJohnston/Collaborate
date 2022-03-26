@@ -231,13 +231,7 @@ def general(request):
     """Takes url request, returns general page"""
     context_dict = {}
     
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
 
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
-
-    print(Category.objects.get())
     category_list = Category.objects.order_by('name')
     context_dict["categories"] = category_list
 
@@ -312,11 +306,6 @@ def show_category(request,category_name_slug):
 
     context_dict = {}
     
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
 
     try:
         category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
@@ -409,11 +398,6 @@ def show_page(request,page_name_slug):
     
     context_dict['comment_form']  = comment_form  
     context_dict['comments'] = comments
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
     return render(request, 'collab_app/show_page.html', context_dict)
 
 

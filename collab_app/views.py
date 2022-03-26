@@ -326,13 +326,16 @@ def show_category(request,category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
-    #styling_function(request, False, context_dict)
+    styling_function(request, False, context_dict)
     print("---")
     print("---")
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
-def add_category(request,university_name_slug):
+def add_general_category(request):
+    return HttpResponse("Fuckyou!")
+
+def add_university_category(request, university_name_slug):
     """Takes url request, returns the creation page for new categories"""
 
     if not request.user.is_authenticated:
@@ -394,7 +397,7 @@ def show_page(request,page_name_slug):
     return render(request, 'collab_app/show_page.html', context_dict)
 
      
-def add_page(request, category_name_slug):
+def add_general_page(request, category_name_slug):
     """Takes url request, returns the creation page for new pages"""
 
     if not request.user.is_authenticated:
@@ -405,12 +408,7 @@ def add_page(request, category_name_slug):
 
     except Category.DoesNotExist:
         category = None
-    
-    
-    if category is None: # You cannot add a page to a Category that does not exist...
         return redirect('/collab_app/')
-    
-    form = PageForm()
     
     if request.method == 'POST':
         form = PageForm(request.POST)
@@ -419,9 +417,8 @@ def add_page(request, category_name_slug):
             if category:
                 page = form.save(commit=False)
                 page.category = category
-                page.url = "www.google.co.uk" 
                 page.save()
-                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
+                return redirect(reverse('collab_app:show_category', {'category_name_slug': category_name_slug}))
             
         else:
             print(form.errors)
@@ -429,6 +426,9 @@ def add_page(request, category_name_slug):
     context_dict = {'form': form, 'category': category}
 
     return render(request, 'collab_app/add_page.html', context=context_dict)
+
+def add_university_page(request, university_name_slug, category_name_slug):
+    pass
 
 
 def add_comment(request, page_name_slug):

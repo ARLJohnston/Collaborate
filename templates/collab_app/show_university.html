@@ -8,5 +8,12 @@
 {% endblock %}
 
 {% block body_block %}
+{% if universities%}
+    {% for university in universities %}
+    <ul>
+        {{ university }}
+    </ul>
+    {% endfor %}
+{% endif %}
 {% include 'collab_app/link_box.html' %}
 {% endblock %}

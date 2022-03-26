@@ -3,12 +3,8 @@
 {% load staticfiles %}
 
 <div id="link-box">
-    {% if recent %}                                                                      
-        <ul>                                                                               
-        {% for element in recent %} 
-            <li><a href="{% url element %}">{{ element }}</a></li>
-        {% endfor %}
-        </ul>
+    {% if recent %}                                                         
+        Temp
     {% else %}
         <ul>
             <li><a href="{% url 'collab_app:index' %}">Home page</a>

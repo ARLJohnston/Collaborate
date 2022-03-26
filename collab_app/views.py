@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
-from collab_app.models import UserProfile, University, Category, Page
+from collab_app.models import UserProfile, University, Category, Page, Comment, Forum
 
 def styling_function(request, add_to_recent, context_dict):
 
@@ -92,10 +92,6 @@ def sign_up(request):
             profile = profile_form.save(commit=False)
             profile.user = user
 
-            
-            
-            
-            
             # Did the user provide a profile picture?
             # If so, we need to get it from the input form and
             #put it in the UserProfile model.
@@ -350,25 +346,6 @@ def add_category(request,university_name_slug):
     
     if university is None:# You cannot  a Category that does not exist...
         return redirect('/collab_app/')
-    
-    form = CategoryForm()
-    
-    """
-    DUPLICATE: is this meant to be here?
-
-     if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-
-            if university:
-                category  = form.save(commit=False)
-                category.name = category
-                page.views = 0 <---- page is not defined, is this meant to be here?
-                page.save()
-                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
-
-        else:
-            print(form.errors) """
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
@@ -405,7 +382,7 @@ class like_page_view(View):
 def show_page(request,page_name_slug):
     print(context_dict["pages"][0].url)
     context_dict = {}
-    comment_form = CommentForm();
+    comment_form = CommentForm()
     comments =  Comment.Objects.get(page = page_name_slug)
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
@@ -416,8 +393,6 @@ def show_page(request,page_name_slug):
     context_dict['comments'] = comments
     return render(request, 'collab_app/show_page.html', context_dict)
 
-
-	
      
 def add_page(request, category_name_slug):
     """Takes url request, returns the creation page for new pages"""
@@ -455,6 +430,7 @@ def add_page(request, category_name_slug):
 
     return render(request, 'collab_app/add_page.html', context=context_dict)
 
+
 def add_comment(request, page_name_slug):
     try: #Get page that the comment is for
         page = Page.objects.get(sulg=page_name_slug)
@@ -478,6 +454,7 @@ def add_comment(request, page_name_slug):
     context_dict = {'form': form, 'page':page}
 
     return render(request, 'collab_app/add_comment.html', context=context_dict)
+
 
 def search_bar(request):
     if request.method == 'GET':

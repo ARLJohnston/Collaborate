@@ -8,5 +8,17 @@
 {% endblock %}
 
 {% block body_block %}
+
+{% if categories %}
+<ul>
+	{% for category in categories %}
+	<li>
+		<a href="{% url 'collab_app:show_general_category' category.slug %}">{{ category.name }}</a>
+	</li>
+	{% endfor %}
+{% else %}
+	<strong>There are no categories present</strong>
+{% endif %}
+
 {% include 'collab_app/link_box.html' %}
 {% endblock %}

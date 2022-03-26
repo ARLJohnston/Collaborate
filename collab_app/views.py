@@ -237,6 +237,10 @@ def general(request):
     if(recent):
         context_dict["recent"] = recent.split(",")
 
+    print(Category.objects.get())
+    category_list = Category.objects.order_by('name')
+    context_dict["categories"] = category_list
+
     return render(request, 'collab_app/general.html', context=context_dict)
     
 @login_required

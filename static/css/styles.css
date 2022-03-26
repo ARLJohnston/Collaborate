@@ -22,9 +22,7 @@ body {
   position: relative;
   width: 60px;
   height: 34px;
-  top: 50%;
-  -ms-transform: translateY(65%);
-  transform: translateY(65%);
+  transform:translateY(-50%);
   }
   
   .switch input { 

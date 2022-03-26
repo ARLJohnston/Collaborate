@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block body_block %}
+{% if comments %}
+	{% for comment in comments %}
+		{{ comment }}
+	{% endfor %}
+{% endif %}
 	<strong id="like_count">{{ page.likes }}</strong>Likes
 	{% if user.is_authenticated %}
 		<button id="like_btn"

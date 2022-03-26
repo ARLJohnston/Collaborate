@@ -24,7 +24,7 @@ def styling_function(request, add_to_recent, context_dict):
         user_profile = UserProfile.objects.get(user=user_data)
         context_dict["profile_picture"] =  user_profile.picture
     except: #User does not exist
-        context_dict["profile_picture"] = None
+        context_dict["profile_picture"] = "images/cog.png" 
 
 def index(request):
     """Takes url request, returns Http response."""
@@ -244,6 +244,7 @@ def general(request):
     """Takes url request, returns general page"""
     context_dict = {}
     
+    styling_function(request, False, context_dict)
 
     category_list = Category.objects.order_by('name')
     context_dict["categories"] = category_list
@@ -328,6 +329,8 @@ def show_category(request,category_name_slug):
         # Assign empties to the context dict.
         context_dict['category'] = None
         context_dict['pages'] = None
+
+    #styling_function(request, False, context_dict)
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 

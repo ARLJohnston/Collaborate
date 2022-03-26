@@ -19,10 +19,10 @@
 	<ul>
 		{% for page in pages %}
 		<li><a href="{{ page.url }}">{{ page.title }}</a>
-		{% if page.image == None %}
-			{{ page.text|truncatewords:50 }}
-		{% else %}
+		{% if page.image %}
 			<img src="{{ page.image.url }}" alt="image" />
+		{% else %}
+			{{ page.text|truncatewords:50 }}
 		{% endif %}
 		</li>
 		{% endfor %}

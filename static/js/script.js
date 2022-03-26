@@ -67,14 +67,15 @@ function addPageToRecent(page = "collab_app:index"){
 		if(!recentPages.includes(page)){
 			setCookie("recent", recent + "," + page, 365);
 		}
+		if(recentPages.length > 6){
+			let recentLatest = recentPages.slice(-6, -0);
+			let newCookie = recentLatest[0];
+			for(let i = 1; i < 5; i++){
+				newCookie = newCookie + "," + recentLatest[i];
+			}
+			setCookie("recent", newCookie, 365);
+		}
 	}
-}
-
-function getRecentPages(){
-	let recent = getCookie("recent");
-	let recentPages = recent.split(";");
-
-	return recentPages;
 }
 
 function onLoad(page){

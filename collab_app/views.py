@@ -10,8 +10,13 @@ from django.contrib.auth.models import User
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
 from collab_app.models import UserProfile, University, Category, Page
 
-def styling_function(request, context_dict):
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+def styling_function(request, add_to_recent, context_dict):
+
+    if(add_to_recent):
+        context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+        recent = request.COOKIES.get("recent")
+        if(recent):
+            context_dict["recent"] = recent.split(",")
 
     try:
         username = request.user.username
@@ -21,17 +26,11 @@ def styling_function(request, context_dict):
     except: #User does not exist
         context_dict["profile_picture"] = None
 
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
-
-    
-
 def index(request):
     """Takes url request, returns Http response."""
     context_dict = {}
 
-    styling_function(request, context_dict)
+    styling_function(request, True, context_dict)
 
     return render(request, 'collab_app/index.html', context=context_dict)
 

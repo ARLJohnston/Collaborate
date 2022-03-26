@@ -6,13 +6,16 @@
     {% if recent %}                                                         
         Temp
     {% else %}
-        <ul>
-            <li><a href="{% url 'collab_app:index' %}">Home page</a>
-            <li><a href="{% url 'collab_app:sign_up' %}">Sign-up</a></li>
-		    <li><a href="{% url 'collab_app:login' %}">Login</a></li>
-		    <li><a href="{% url 'collab_app:about' %}">About</a></li>
-		    <li><a href="{% url 'collab_app:contact_us' %}">Contact us</a></li>
-		    <li><a href="{% url 'collab_app:general' %}">General</a></li>
-        </ul>
+        <a href="{% url 'collab_app:index' %}">Home page</a>
+        <br>
+        <a href="{% url 'collab_app:sign_up' %}">Sign-up</a>
+        <br>
+		    <a href="{% url 'collab_app:login' %}">Login</a>
+        <br>
+		    <a href="{% url 'collab_app:about' %}">About</a>
+        <br>
+		    <a href="{% url 'collab_app:contact_us' %}">Contact us</a>
+        <br>
+		    <a href="{% url 'collab_app:general' %}">General</a>
     {% endif %}
 </div>

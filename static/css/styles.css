@@ -6,7 +6,7 @@ html {
 body {
     --primaryColor: #ffffff;
     --secondaryColor: #282a36;
-    --theme-icon: url(./sun.png);
+    --theme-icon: url(../images/sun.png);
 
     background-color: var(--primaryColor);
     color: var(--secondaryColor);
@@ -15,7 +15,7 @@ body {
 .dark-theme{
     --primaryColor: #282a36;
     --secondaryColor: #f8f8f2;
-    --theme-icon: url(./moon.png);
+    --theme-icon: url(../images/moon.png);
 }
 .switch {
   float: right;
@@ -142,15 +142,24 @@ body {
         width: 10%;
         padding: 10px;
         margin-right: 20px;
+        height: 100%;
 
         /*Box styling*/
         border-radius: 25px;
-        width: 10%;
-        height: 10%;
+        border-top: none;
         border: 2px solid var(--secondaryColor);
 
         position:fixed;
         top: 50%;
+        height:15%;
         right: 10px;
       }
   }
+
+#searchButton {
+  margin-top: 8px;
+  height: 30px;
+  background-image: url('../images/search.png');
+  transform: translateY(50%);
+}
+

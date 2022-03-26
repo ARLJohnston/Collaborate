@@ -409,6 +409,11 @@ def show_page(request,page_name_slug):
     
     context_dict['comment_form']  = comment_form  
     context_dict['comments'] = comments
+    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+
+    recent = request.COOKIES.get("recent")
+    if(recent):
+        context_dict["recent"] = recent.split(",")
     return render(request, 'collab_app/show_page.html', context_dict)
 
 

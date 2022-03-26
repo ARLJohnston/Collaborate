@@ -330,7 +330,7 @@ def show_category(request,category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
-    return render(request, 'collab_app/category.html', context=context_dict)
+    return render(request, 'collab_app/show_category.html', context=context_dict)
 
 def add_category(request,university_name_slug):
     """Takes url request, returns the creation page for new categories"""

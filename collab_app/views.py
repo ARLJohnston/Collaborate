@@ -242,7 +242,14 @@ def general(request):
 @login_required
 def universities(request):
     """Takes url request, returns universities page"""
+    username = request.user.username
+    user_data = User.objects.get(username=username)
+    user_profile = UserProfile.objects.get(user=user_data)
+    user_university = University.objects.get(user=user_profile)
+    universities = University.objects.all().filter(user = user_profile)
     context_dict = {}
+    context_dict = {universities: 'universities'}
+
     
     context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
 

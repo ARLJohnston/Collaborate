@@ -18,7 +18,7 @@
 	{% if pages %}
 	<ul>
 		{% for page in pages %}
-		<li><a href="{{ page.url }}">{{ page.title }}</a>
+		<a href="{% url 'collab_app:show_general_page' page.category.slug page.slug%}">{{ page.title }}</a>
 		{% if page.image %}
 			<img src="{{ page.image.url }}" alt="image" />
 		{% else %}
@@ -30,6 +30,19 @@
 	{% else %}
 		There are currently no posts.
 	{% endif %}
+	<!-- Allow user to create page -->
+	<h2>Add a page</h2>
+	<div>
+		<form id="add_page_form" method="post" action="{% url 'collab_app:add_page' category.slug %}">
+			{% csrf_token %}
+			{% for field in form.visible_fields %}
+				{{ field.errors }}
+				{{ field.help_text }}
+				{{ field }}
+			{% endfor %}
+			<input type="submit" name="submit" value="Post"/>
+		</form>
+	</div>
 	</div>
 	{% endif %}
 {% endblock %}

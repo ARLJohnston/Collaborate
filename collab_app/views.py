@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
-from collab_app.models import UserProfile, University, Category, Page
+from collab_app.models import UserProfile, University, Category, Page, Comment, Forum
 
 def styling_function(request, add_to_recent, context_dict):
 
@@ -24,7 +24,7 @@ def styling_function(request, add_to_recent, context_dict):
         user_profile = UserProfile.objects.get(user=user_data)
         context_dict["profile_picture"] =  user_profile.picture
     except: #User does not exist
-        context_dict["profile_picture"] = "images/cog.png" 
+        pass
 
 def index(request):
     """Takes url request, returns Http response."""
@@ -92,10 +92,6 @@ def sign_up(request):
             profile = profile_form.save(commit=False)
             profile.user = user
 
-            
-            
-            
-            
             # Did the user provide a profile picture?
             # If so, we need to get it from the input form and
             #put it in the UserProfile model.
@@ -313,7 +309,7 @@ def add_university(request):
             print(form.errors)
     return render(request, 'collab_app/add_university.html', {'form': form})
 
-def show_category(request,category_name_slug):
+def show_general_category(request, category_name_slug):
     """Takes url request, returns a specific university page"""
 
     context_dict = {}
@@ -330,11 +326,38 @@ def show_category(request,category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
-    #styling_function(request, False, context_dict)
+    styling_function(request, False, context_dict)
+
+    print("[SHOW_GENERAL_CATEGORY] :=", context_dict)
+    return render(request, 'collab_app/show_category.html', context=context_dict)
+
+def show_university_category(request,university_name_slug, category_name_slug):
+    """Takes url request, returns a specific university page"""
+
+    context_dict = {}
+    
+    try:
+        category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
+        pages = Page.objects.filter(category=category) # Get all the associated pages for the specified category.
+        # Add the pages and category to the context dictionary.
+        context_dict['pages'] = pages
+        context_dict['category'] = category
+
+    except Category.DoesNotExist:
+        # Assign empties to the context dict.
+        context_dict['category'] = None
+        context_dict['pages'] = None
+
+    styling_function(request, False, context_dict)
+    print("---")
+    print("---")
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
-def add_category(request,university_name_slug):
+def add_general_category(request):
+    return HttpResponse("Fuckyou!")
+
+def add_university_category(request, university_name_slug):
     """Takes url request, returns the creation page for new categories"""
 
     if not request.user.is_authenticated:
@@ -348,25 +371,6 @@ def add_category(request,university_name_slug):
     
     if university is None:# You cannot  a Category that does not exist...
         return redirect('/collab_app/')
-    
-    form = CategoryForm()
-    
-    """
-    DUPLICATE: is this meant to be here?
-
-     if request.method == 'POST':
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-
-            if university:
-                category  = form.save(commit=False)
-                category.name = category
-                page.views = 0 <---- page is not defined, is this meant to be here?
-                page.save()
-                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
-
-        else:
-            print(form.errors) """
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
@@ -399,10 +403,22 @@ class like_page_view(View):
 
         return HttpResponse(page.likes)
 
-
-def show_page(request,page_name_slug):
+def show_general_page(request, category_name_slug, page_name_slug):
     context_dict = {}
-    comment_form = CommentForm();
+    category = Category.objects.get(name=category_name_slug)
+    page = Page.objects.get(slug=page_name_slug)
+    context_dict["page"] = page
+    context_dict['category'] = category
+    return render(request, 'collab_app/show_page.html', context_dict)
+
+
+def show_university_page(request, university_name_slug, category_name_slug, page_name_slug):
+
+    context_dict = {}
+    page = Page.objects.filter(slug=page_name_slug)
+    context_dict["page"] = page
+    """print(context_dict["pages"][0].url)
+    context_dict = {}
     comments =  Comment.Objects.get(page = page_name_slug)
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
@@ -411,12 +427,11 @@ def show_page(request,page_name_slug):
     
     context_dict['comment_form']  = comment_form  
     context_dict['comments'] = comments
+    """
     return render(request, 'collab_app/show_page.html', context_dict)
 
-
-	
      
-def add_page(request,category_name_slug):
+def add_general_page(request, category_name_slug):
     """Takes url request, returns the creation page for new pages"""
 
     if not request.user.is_authenticated:
@@ -427,12 +442,7 @@ def add_page(request,category_name_slug):
 
     except Category.DoesNotExist:
         category = None
-    
-    
-    if category is None: # You cannot add a page to a Category that does not exist...
         return redirect('/collab_app/')
-    
-    form = PageForm()
     
     if request.method == 'POST':
         form = PageForm(request.POST)
@@ -442,7 +452,7 @@ def add_page(request,category_name_slug):
                 page = form.save(commit=False)
                 page.category = category
                 page.save()
-                return redirect(reverse('collab_app:show_category', kwargs={'category_name_slug': category_name_slug}))
+                return redirect(reverse('collab_app:show_category', {'category_name_slug': category_name_slug}))
             
         else:
             print(form.errors)
@@ -451,9 +461,40 @@ def add_page(request,category_name_slug):
 
     return render(request, 'collab_app/add_page.html', context=context_dict)
 
+def add_university_page(request, university_name_slug, category_name_slug):
+    pass
+
+
+def add_comment(request, page_name_slug):
+    try: #Get page that the comment is for
+        page = Page.objects.get(sulg=page_name_slug)
+
+    except Page.DoesNotExist:
+        page = None
+
+    form = CommentForm()
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            if page:
+                comment = form.save(commit=False)
+                comment.page = page
+                comment.save()
+                return redirect(reverse('collab_app:show_page', kwargs={'page_name_slug': page_name_slug}))
+        else:
+            print(form.errors)
+    context_dict = {'form': form, 'page':page}
+
+    return render(request, 'collab_app/add_comment.html', context=context_dict)
+
+
 def search_bar(request):
     if request.method == 'GET':
         search = request.GET.get('search')
-        page = Page.objects.all().filter(title=search)
-        return render(request, 'collab_app/search_result.html', {'page':page})
+        print("[SEARCH QUERY]:", search)
+        pages = Page.objects.all().filter(title__contains=search)
+        print("[PAGES FOUND]:", pages)
+        return render(request, 'collab_app/search_result.html', {'pages':pages})
     

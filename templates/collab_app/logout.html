@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends 'collab_app/base.html' %}
+
+{% load staticfiles %}
+
+{% block title_block %}
+	Logout
+{% endblock %}
+
+{% block body_block %}
+	<form id="logout form" method="post" action="{% url 'collab_app:logout' %}">
+	{% csrf_token %}
+	<input type="submit" value="Log out?" />
+</form>
+{% include 'collab_app/link_box.html' %}
+{% endblock %}

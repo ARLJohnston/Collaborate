@@ -17,7 +17,7 @@
     <script type="text/javascript" src="{% static 'js/script.js' %}"></script>
 
     <!-- Include jQuery -->
-    <script src="{% static "js/jquery-3.3.1.min.js" %}" crossorigin="anonymous"></script>
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}" crossorigin="anonymous"></script>
 
     <div class="topnav-grid">
         <a href="{% url 'collab_app:index'%}">
@@ -29,6 +29,9 @@
             <button class="searchButton" type="submit">Search</button>
         </form>
         {% if user.is_authenticated %}
+            <form action="{% url 'collab_app:logout' %}">
+                <input type="submit" value="Log Out">
+            </form>
             {% if profile_picture %}
                 <a href="{% url 'collab_app:my_account'%}">
                     <img id="accountButton" src="{{ MEDIA_URL}}{{ profile_picture }}" alt="My-Account" height="50" width="50">

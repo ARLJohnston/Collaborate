@@ -37,7 +37,7 @@
 	<div>
 		<img id="center" src="{% static 'images/logo.png' %}" alt = "Collaborate">
 	</div>
-
+	{% if not user.is_authenticated %}
 	<div>
 		<form class="inlineElements" action="{% url 'collab_app:login' %}">
 			<input type="submit" value="Log in">
@@ -47,6 +47,7 @@
 			<input type="submit" value="Sign-up">
 		</form>
 	</div>
+	{% endif %}
 
 	<div>
 		<form class="inlineElements" action="{% url 'collab_app:general' %}">

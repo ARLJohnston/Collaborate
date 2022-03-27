@@ -178,6 +178,13 @@ def login_view(request):
     # blank dictionary object...
         return render(request, 'collab_app/login.html', context_dict)
 
+def logout_view(request):
+    """Takes URL request, returns logout page."""
+    if request.method == 'POST':
+        logout(request)
+        return redirect('collab_app:index')
+    return render(request, 'collab_app/logout.html')
+
 def my_account_redirect(request):
     """Takes url request, redirects to slug account"""
     if not request.user.is_authenticated:
@@ -471,7 +478,7 @@ def show_university_page(request, university_name_slug, category_name_slug, page
                 comment.post = page
                 comment.pinned = False
                 comment.save()
-                
+
         context_dict['form'] = form
 
     return render(request, 'collab_app/show_page.html', context_dict)

@@ -6,6 +6,7 @@ html {
 body {
     --primaryColor: #ffffff;
     --secondaryColor: #282a36;
+    --visitedColor: blue;
     --theme-icon: url(../images/sun.png);
 
     background-color: var(--primaryColor);
@@ -15,8 +16,13 @@ body {
 .dark-theme{
     --primaryColor: #282a36;
     --secondaryColor: #f8f8f2;
+    --visitedColor: #8be9fd;
     --theme-icon: url(../images/moon.png);
 }
+a:visited {
+  color: var(--visitedColor);
+}
+
 .switch {
   float: right;
   position: relative;
@@ -175,8 +181,8 @@ body {
 /* Topnav as grid */
 .topnav-grid {
   display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 10% 60% 10% 10% 10%;
+  gap: 0.5rem;
+  grid-template-columns: 5% 80% 5% 10%;
   overflow: hidden;
   border-bottom: 1px solid var(--secondaryColor);
 

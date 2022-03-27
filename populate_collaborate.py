@@ -70,21 +70,26 @@ def populate():
               'Universities': {'University': universities}
               }
 
-    users = [{'id': 1, 'user_name': 'AlistairJ', 'superuser': True, 'email': 'alistair1234@test.com'},
-             {'id': 2, 'user_name': 'HollyEdees123', 'superuser': True, 'email': 'holly_edees@test.com'},
-             {'id': 3, 'user_name': 'MaxWW', 'superuser': True, 'email': 'MaxWW02@test.com'},
-             {'id': 4, 'user_name': 'Gulati_Naman', 'superuser': True, 'email': '00naman@test.com'},
-             {'id': 5, 'user_name': 'MarinaSJP', 'superuser': False, 'email': 'marinasj@test.com'}]
+    test_users = [{'id': 123456, 'user_name': 'AlistairJ', 'superuser': True, 'first_name': 'Alistair',
+                   'last_name': 'Johnston', 'email': 'alistair1234@test.com'},
+                  {'id': 284982, 'user_name': 'HollyEdees123', 'superuser': True, 'first_name': 'Holly',
+                   'last_name': 'Edees', 'email': 'holly_edees@test.com'},
+                  {'id': 391774, 'user_name': 'MaxWW', 'superuser': True, 'first_name': 'Max',
+                   'last_name': 'Wraith-Whiting', 'email': 'MaxWW02@test.com'},
+                  {'id': 442983, 'user_name': 'Gulati_Naman', 'superuser': True, 'first_name': 'Naman',
+                   'last_name': 'Gulati', 'email': '00naman@test.com'},
+                  {'id': 594999, 'user_name': 'MarinaSJP', 'superuser': True, 'first_name': 'Marina',
+                   'last_name': 'San Jose Pena', 'email': 'marinasj@test.com'}]
 
-    for user in users:
-        add_user(user['id'], user['user_name'], user['superuser'])
+    for user in test_users:
+        add_user(user['id'], user['user_name'], user['superuser'], user['email'], user['first_name'], user['last_name'])
 
-    all_users = User.objects.all()
+    users = User.objects.all()
     user_list = []
-    for i in range(len(all_users)):
-        user_id = all_users[i].id
-        new_user = add_user_profile(all_users[i], user_id, users[i]['email'])
-        user_list.append(new_user)
+    for user in users:
+        user_id = user.id
+        user_profile = add_user_profile(user, user_id)
+        user_list.append(user_profile)
 
     for forum, forum_data in forums.items():
         f = add_forum(forum)
@@ -114,14 +119,15 @@ def populate():
                             add_comment(p, com['body'], random.choice(user_list))
 
 
-def add_user_profile(user, userID, email):
-    u = UserProfile.objects.get_or_create(user=user, user_id=userID, email=email)[0]
+def add_user_profile(user, user_id):
+    u = UserProfile.objects.get_or_create(user=user, user_id=user_id)[0]
     u.save()
     return u
 
 
-def add_user(user_id, user_name, superuser):
-    u = User.objects.get_or_create(id=user_id, username=user_name, is_superuser=superuser)
+def add_user(user_id, user_name, superuser, email, first_name, last_name):
+    u = User.objects.get_or_create(id=user_id, username=user_name, is_superuser=superuser, email=email,
+                                   first_name=first_name, last_name=last_name)
     return u
 
 

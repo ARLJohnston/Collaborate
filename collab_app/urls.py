@@ -20,7 +20,9 @@ urlpatterns = [
       
       path('general/<slug:category_name_slug>/', views.show_general_category,
             name='show_general_category'),
-      path('general/add_category/', views.add_general_category, name='add_page'),
+      path('general/add_general_category', views.add_general_category, name='add_general_category'),
+      
+      path('general/<slug:category_name_slug>/add_general_page', views.add_page, name='add_general_page'),
 
       path('general/<slug:category_name_slug>/<slug:page_name_slug>/',
             views.show_general_page, name='show_general_page'),
@@ -34,9 +36,14 @@ urlpatterns = [
             name='add_university'),
       path('universities/<slug:university_name_slug>/',
             views.show_university, name='show_university'),
+      
+      path('universities/<slug:university_name_slug>/add_university_category',
+          views.add_university_category, name='add_university_category'),
 
       path('universities/<slug:university_name_slug>/<slug:category_name_slug>/',
             views.show_university_category, name='show_university_category'),
+            
+      path('universities/<slug:university_name_slug>/<slug:category_name_slug>/add_university_page', views.add_page, name='add_university_page'),
 
       path('universities/<slug:university_name_slug>/<slug:category_name_slug>/<slug:page_name_slug>/',
             views.show_university_page, name='show_university_page'),

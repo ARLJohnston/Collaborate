@@ -1,5 +1,8 @@
-function setCookie(cookieName, cookieValue){
- 	document.cookie = cookieName + "=" + cookieValue;
+function setCookie(cookieName, cookieValue, expiry){
+	const d = new Date();
+	d.setTime(d.getTime() + (expiry * 24 * 60 * 60 * 1000));
+ 	let expires = "expires="+d.toUTCString();
+ 	document.cookie = cookieName + "=" + cookieValue + ";" + expires + ";path=/";
 }
 
 function getCookie(cookieName){
@@ -25,7 +28,7 @@ function getCookie(cookieName){
 function validateCookie(cookieName, defaultVal = true){
 	let cookie = getCookie(cookieName);
 	if(cookie == ""){
-		setCookie(cookieName, defaultVal);
+		setCookie(cookieName, defaultVal, 365);
 	}
 }
 
@@ -37,10 +40,10 @@ function changeTheme(){
 	element.classList.toggle("dark-theme");
 
 	if(theme == "true"){
-		setCookie("theme", "false");
+		setCookie("theme", "false", 365);
 	}
 	else{
-		setCookie("theme", "true");
+		setCookie("theme", "true", 365);
 	}
 }
 
@@ -62,7 +65,7 @@ function addPageToRecent(page = "collab_app:index"){
 		let recentPages = recent.split(",");
 
 		if(!recentPages.includes(page)){
-			setCookie("recent", recent + "," + page);
+			setCookie("recent", recent + "," + page, 365);
 		}
 		if(recentPages.length > 6){
 			let recentLatest = recentPages.slice(-6, -0);
@@ -70,7 +73,7 @@ function addPageToRecent(page = "collab_app:index"){
 			for(let i = 1; i < 5; i++){
 				newCookie = newCookie + "," + recentLatest[i];
 			}
-			setCookie("recent", newCookie);
+			setCookie("recent", newCookie, 365);
 		}
 	}
 }

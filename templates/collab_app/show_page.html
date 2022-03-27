@@ -8,29 +8,37 @@
 {% endblock %}
 
 {% block body_block %}
+<h1>{{ page.title }}</h1>
+<body>
+	{{ page.text }}
+</body>
+
 <div>
 	<form id="add_comment" method="post" action="{% url 'collab_app:add_comment' page.slug %}">
 		{% csrf_token %}
-		{% for field in form.visible_fields %}
+		{% for field in add_comment.visible_fields %}
 			{{ field.errors }}
 			{{ field.help_text }}
 			{{ field }}
 		{% endfor %}
 		<input type="submit" name="submit" value="Post"/>
 </div>
+<strong id="like_count">{{ page.likes }}</strong>Likes
+{% if user.is_authenticated %}
+	<button id="like_btn"
+				 data-pageid="{{ page.id }}"
+				  class="btn btn-primary btn-sm"
+				  type="button">
+		<span data-feather="thumbs-up"></span>
+		Like Page
+	</button>
+	
+{% endif %}
 {% if comments %}
 	{% for comment in comments %}
+	<ul>
 		{{ comment }}
+	</ul>
 	{% endfor %}
 {% endif %}
-	<strong id="like_count">{{ page.likes }}</strong>Likes
-	{% if user.is_authenticated %}
-		<button id="like_btn"
-					 data-pageid="{{ page.id }}"
-			 		 class="btn btn-primary btn-sm"
-		 			 type="button">
-			<span data-feather="thumbs-up"></span>
-			Like Page
-		</button>
-	{% endif %}
 {% endblock %}

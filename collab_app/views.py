@@ -293,6 +293,7 @@ def show_university(request, university_name_slug):
         categories = ForumCategoryAssociation.objects.filter(forum=university.forum)
         categories = [cat.category for cat in categories]
         context_dict['categories'] = categories
+
     except Category.DoesNotExist:
         context_dict['university'] = None
         context_dict['categories'] = None
@@ -300,12 +301,13 @@ def show_university(request, university_name_slug):
     print("[show_university]:=", context_dict)
     return render(request, 'collab_app/show_university.html', context=context_dict)
 
-def add_university(request):
+def add_university(request, university_name_slug):
     """Takes url request, returns the creation page for new universities"""
+    
+    context_dict = {}
 
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
-    form = UniversityForm()
     
     if request.method == 'POST':# A HTTP POST?
         form = UniversityForm(request.POST)
@@ -315,10 +317,11 @@ def add_university(request):
             form.save(commit=True)
             # Now that the category is saved, we could confirm this.
             # For now, just redirect the user back to the index view.
+            context_dict['form'] = form
             return redirect('/collab_app/')
         else:
             print(form.errors)
-    return render(request, 'collab_app/add_university.html', {'form': form})
+    return render(request, 'collab_app/add_university.html', context_dict)
 
 def show_general_category(request, category_name_slug):
     """Takes url request, returns a specific university page"""
@@ -342,7 +345,7 @@ def show_general_category(request, category_name_slug):
     print("[SHOW_GENERAL_CATEGORY] :=", context_dict)
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
-def show_university_category(request,university_name_slug, category_name_slug):
+def show_university_category(request, university_name_slug, category_name_slug):
     """Takes url request, returns a specific university page"""
 
     context_dict = {}
@@ -365,6 +368,7 @@ def show_university_category(request,university_name_slug, category_name_slug):
         context_dict['university'] = None
 
     styling_function(request, False, context_dict)
+    print("[[[]]] =",university_name_slug, category_name_slug)
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 

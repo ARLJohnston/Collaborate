@@ -10,7 +10,7 @@
 {% block body_block %}
 {% if university %}
     
-    <a href="{% url 'collab_app:add_university_category' %}">Add a Category here</a><br>
+    <a href="{% url 'collab_app:add_university_category' university.slug %}">Add a Category here</a><br>
 
     {% for category in categories %}
     <ul>

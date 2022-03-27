@@ -309,7 +309,29 @@ def add_university(request):
             print(form.errors)
     return render(request, 'collab_app/add_university.html', {'form': form})
 
-def show_category(request,category_name_slug):
+def show_general_category(request, category_name_slug):
+    """Takes url request, returns a specific university page"""
+
+    context_dict = {}
+    
+    try:
+        category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
+        pages = Page.objects.filter(category=category) # Get all the associated pages for the specified category.
+        # Add the pages and category to the context dictionary.
+        context_dict['pages'] = pages
+        context_dict['category'] = category
+
+    except Category.DoesNotExist:
+        # Assign empties to the context dict.
+        context_dict['category'] = None
+        context_dict['pages'] = None
+
+    styling_function(request, False, context_dict)
+
+    print("[SHOW_GENERAL_CATEGORY] :=", context_dict)
+    return render(request, 'collab_app/show_category.html', context=context_dict)
+
+def show_university_category(request,university_name_slug, category_name_slug):
     """Takes url request, returns a specific university page"""
 
     context_dict = {}
@@ -381,11 +403,22 @@ class like_page_view(View):
 
         return HttpResponse(page.likes)
 
-
-def show_page(request,page_name_slug):
-    print(context_dict["pages"][0].url)
+def show_general_page(request, category_name_slug, page_name_slug):
     context_dict = {}
-    comment_form = CommentForm()
+    category = Category.objects.get(name=category_name_slug)
+    page = Page.objects.get(slug=page_name_slug)
+    context_dict["page"] = page
+    context_dict['category'] = category
+    return render(request, 'collab_app/show_page.html', context_dict)
+
+
+def show_university_page(request, university_name_slug, category_name_slug, page_name_slug):
+
+    context_dict = {}
+    page = Page.objects.filter(slug=page_name_slug)
+    context_dict["page"] = page
+    """print(context_dict["pages"][0].url)
+    context_dict = {}
     comments =  Comment.Objects.get(page = page_name_slug)
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
@@ -394,6 +427,7 @@ def show_page(request,page_name_slug):
     
     context_dict['comment_form']  = comment_form  
     context_dict['comments'] = comments
+    """
     return render(request, 'collab_app/show_page.html', context_dict)
 
      
@@ -459,6 +493,8 @@ def add_comment(request, page_name_slug):
 def search_bar(request):
     if request.method == 'GET':
         search = request.GET.get('search')
-        page = Page.objects.all().filter(title=search)
-        return render(request, 'collab_app/search_result.html', {'page':page})
+        print("[SEARCH QUERY]:", search)
+        pages = Page.objects.all().filter(title__contains=search)
+        print("[PAGES FOUND]:", pages)
+        return render(request, 'collab_app/search_result.html', {'pages':pages})
     

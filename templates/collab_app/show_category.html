@@ -18,7 +18,7 @@
 	{% if pages %}
 	<ul>
 		{% for page in pages %}
-		<!--<li><a href="{{ page.url }}">{{ page.title }}</a>-->
+		<a href="{% url 'collab_app:show_general_page' page.category.slug page.slug%}">{{ page.title }}</a>
 		{% if page.image %}
 			<img src="{{ page.image.url }}" alt="image" />
 		{% else %}

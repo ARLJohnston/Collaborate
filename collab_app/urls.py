@@ -17,12 +17,14 @@ urlpatterns = [
 
       # General pages
       path('general/', views.general, name='general'),
-      path('general/<slug:category_name_slug>/', views.show_category,
+      
+      path('general/<slug:category_name_slug>/', views.show_general_category,
             name='show_general_category'),
       path('general/add_category/', views.add_general_category, name='add_page'),
 
       path('general/<slug:category_name_slug>/<slug:page_name_slug>/',
-            views.show_page, name='show_general_page'),
+            views.show_general_page, name='show_general_page'),
+
       path('general/<slug:category_name_slug>/add_page', views.add_general_page, name='add_page'),
 
       # University pages
@@ -34,10 +36,10 @@ urlpatterns = [
             views.show_university, name='show_university'),
 
       path('universities/<slug:university_name_slug>/<slug:category_name_slug>/',
-            views.show_category, name='show_university_category'),
+            views.show_university_category, name='show_university_category'),
 
       path('universities/<slug:university_name_slug>/<slug:category_name_slug>/<slug:page_name_slug>/',
-            views.show_page, name='show_university_page'),
+            views.show_university_page, name='show_university_page'),
 
       # Like AJAX request
       path('like_page/', views.like_page_view.as_view(), name='like_page'),

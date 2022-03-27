@@ -209,21 +209,31 @@ def my_account(request):
     user_profile_form = UserProfileForm(instance=user_profile)
 
     if request.method == 'POST':
-        user_profile_form = UserProfileForm(request.POST)
-        user_form = UserForm(request.POST)
-        user_form.save(request.POST)
-        user_profile_form.save(request.POST)
+        user_form = UserForm(request.POST, instance=request.user)
+        user_profile_form = UserProfileForm(request.POST, instance=user_profile)
 
         if user_profile_form.is_valid() and user_form.is_valid():
+            user = user_form.save()
+
+            # Now we hash the password with the set_password method.
+            # Once hashed, we can update the user object.
+            user.set_password(user.password)
+            user.save()
+            profile = user_profile_form.save(commit=False)
+            profile.user = user
+
+            # Did the user provide a profile picture?
+            # If so, we need to get it from the input form and
+            #put it in the UserProfile model.
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
             
-            biographyvalue = user_profile_form.cleaned_data.get("biography")
-            picture = user_profile_form.cleaned_data.get("picture")
-            email = user_profile_form.cleaned_data.get('email')
+            # Now we save the UserProfile model instance.
             
-            username = user_form.cleaned_data.get('username')
-            print(username, biographyvalue, email)
-            context_dict= {'user_form': user_form,'user_profile_form': user_profile_form, 'username': username, 
-                        'emailvalue':email,'biographyvalue':biographyvalue,'picture':picture}
+            
+            profile.save()
+
+            context_dict= {'user_form': user_form,'user_profile_form': user_profile_form, }
 
             context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
 
@@ -233,7 +243,10 @@ def my_account(request):
                 for page in recent.split(";"):
                     recent_list += page
 
-        return render(request, 'collab_app/my_account.html', context=context_dict)
+        #return render(request, 'collab_app/my_account.html', context=context_dict)
+        return redirect('/collab_app/')
+        
+
 
     else:
         context_dict = {'user_form': user_form,'user_profile_form': user_profile_form}

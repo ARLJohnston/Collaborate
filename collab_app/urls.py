@@ -13,7 +13,6 @@ urlpatterns = [
       path('login/', views.login_view, name='login'),
       path('my_account/', views.my_account, name='my_account'),
       path('my_account/<slug:account_name_slug>/', views.my_account),
-      path('add_comment/<slug:page_name_slug>/', views.add_comment, name='add_comment'),
 
       # General pages
       path('general/', views.general, name='general'),

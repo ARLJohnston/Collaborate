@@ -14,9 +14,9 @@
 </body>
 
 <div>
-	<form id="add_comment" method="post" action="{% url 'collab_app:add_comment' page.slug %}">
+	<form id="add_comment" method="post">
 		{% csrf_token %}
-		{% for field in add_comment.visible_fields %}
+		{% for field in form.visible_fields %}
 			{{ field.errors }}
 			{{ field.help_text }}
 			{{ field }}

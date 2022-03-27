@@ -427,6 +427,18 @@ def show_general_page(request, category_name_slug, page_name_slug):
         context_dict['category'] = None
         context_dict['comments'] = None
 
+    # Needs if not user.is_authenticated()
+    if request.method == 'POST':
+        form = CommentForm(request.POST, initial={'pinned': False, 'post':page})
+
+        if form.is_valid():
+            if page:
+                comment = form.save(commit=False)
+                comment.post = page
+                comment.pinned = False
+                comment.save()
+        context_dict['form'] = form
+
     return render(request, 'collab_app/show_page.html', context_dict)
 
 
@@ -448,15 +460,18 @@ def show_university_page(request, university_name_slug, category_name_slug, page
         context_dict["category"] = None
         context_dict["page"] = None
 
-    """
-    comments =  Comment.Objects.get(page = page_name_slug)
+        # Needs if not user.is_authenticated()
     if request.method == 'POST':
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
-            comment_form.save()
-    context_dict['comment_form']  = comment_form  
-    context_dict['comments'] = comments
-    """
+        form = CommentForm(request.POST, initial={'pinned': False, 'post':page})
+
+        if form.is_valid():
+            if page:
+                comment = form.save(commit=False)
+                comment.post = page
+                comment.pinned = False
+                comment.save()
+                
+        context_dict['form'] = form
 
     return render(request, 'collab_app/show_page.html', context_dict)
 
@@ -498,7 +513,7 @@ def add_university_page(request, university_name_slug, category_name_slug):
 def add_comment(request, page_name_slug):
 
     try: #Get page that the comment is for
-        page = Page.objects.get(sulg=page_name_slug)
+        page = Page.objects.get(slug=page_name_slug)
 
     except Page.DoesNotExist:
         page = None

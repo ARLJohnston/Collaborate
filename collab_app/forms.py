@@ -9,7 +9,7 @@ class CommentForm(forms.ModelForm):
     class Meta:
         # Provide an association between the ModelForm and a model
         model = Comment
-        fields = ('body',)
+        fields = ('body', 'user')
 
 
 class CategoryForm(forms.ModelForm):

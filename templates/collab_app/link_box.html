@@ -4,7 +4,9 @@
 
 <div id="link-box">
     {% if recent %}                                                         
-        Temp
+    {% for page in recent %}
+        <a href="{% url page %}">{{ page }}<a>
+    {% endfor %}
     {% else %}
         <a href="{% url 'collab_app:index' %}">Home page</a>
         <br>

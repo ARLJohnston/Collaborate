@@ -8,10 +8,10 @@
 {% endblock %}
 
 {% block body_block %}
-{% if universities%}
-    {% for university in universities %}
+{% if university %}
+    {% for category in categories %}
     <ul>
-        {{ university }}
+        <a href="{% url 'collab_app:show_university_category' university.slug category.slug %}">{{ category.name }}</a>
     </ul>
     {% endfor %}
 {% endif %}

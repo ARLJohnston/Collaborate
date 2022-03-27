@@ -1,3 +1,4 @@
+from sre_parse import CATEGORIES
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -8,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
 from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
-from collab_app.models import UserProfile, University, Category, Page, Comment, Forum
+from collab_app.models import ForumCategoryAssociation, UserProfile, University, Category, Page, Comment, Forum
 
 def styling_function(request, add_to_recent, context_dict):
 
@@ -270,23 +271,21 @@ def universities(request):
 
     return render(request, 'collab_app/universities.html', context=context_dict)
 
-def show_university(request,university_name_slug):
+def show_university(request, university_name_slug):
     """Takes url request, returns a specific university page"""
-
     context_dict = {}
     
-
     try:
-        # Attempt to retrieve the category from the category_name_slug.
         university = University.objects.get(slug=university_name_slug)
-
-        # Add the pages and category to the context dictionary.
         context_dict['university'] = university
-
+        categories = ForumCategoryAssociation.objects.filter(forum=university.forum)
+        categories = [cat.category for cat in categories]
+        context_dict['categories'] = categories
     except Category.DoesNotExist:
-        # Assign empties to the context dict.
         context_dict['university'] = None
+        context_dict['categories'] = None
 
+    print("[show_university]:=", context_dict)
     return render(request, 'collab_app/show_university.html', context=context_dict)
 
 def add_university(request):
@@ -337,20 +336,23 @@ def show_university_category(request,university_name_slug, category_name_slug):
     context_dict = {}
     
     try:
-        category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
+        university = University.objects.get(slug=university_name_slug)
+        categories = ForumCategoryAssociation.objects.filter(forum=university.forum)
+        category = [cat.category for cat in categories if cat.category.slug == category_name_slug][0]
+        #category = Category.objects.get(slug=category_name_slug) # Get the category with the correct name.
         pages = Page.objects.filter(category=category) # Get all the associated pages for the specified category.
         # Add the pages and category to the context dictionary.
         context_dict['pages'] = pages
         context_dict['category'] = category
+        context_dict['university'] = university
 
     except Category.DoesNotExist:
         # Assign empties to the context dict.
         context_dict['category'] = None
         context_dict['pages'] = None
+        context_dict['university'] = None
 
     styling_function(request, False, context_dict)
-    print("---")
-    print("---")
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
@@ -404,20 +406,21 @@ class like_page_view(View):
         return HttpResponse(page.likes)
 
 def show_general_page(request, category_name_slug, page_name_slug):
+    """Takes URL request, category slug, page slug, returns general page."""
     context_dict = {}
     category = Category.objects.get(name=category_name_slug)
     page = Page.objects.get(slug=page_name_slug)
+
     context_dict["page"] = page
     context_dict['category'] = category
     return render(request, 'collab_app/show_page.html', context_dict)
 
 
 def show_university_page(request, university_name_slug, category_name_slug, page_name_slug):
-
+    """Takes URL request, university slug, category slug, page slug, returns university page."""
     context_dict = {}
     page = Page.objects.filter(slug=page_name_slug)
     context_dict["page"] = page
-    """print(context_dict["pages"][0].url)
     context_dict = {}
     comments =  Comment.Objects.get(page = page_name_slug)
     if request.method == 'POST':
@@ -427,7 +430,7 @@ def show_university_page(request, university_name_slug, category_name_slug, page
     
     context_dict['comment_form']  = comment_form  
     context_dict['comments'] = comments
-    """
+
     return render(request, 'collab_app/show_page.html', context_dict)
 
      

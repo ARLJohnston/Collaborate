@@ -37,7 +37,7 @@ class University(models.Model):
     name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True, primary_key=True)
 
     # One to one relationship with university
-    #forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
+    forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
 
     # Many-to-many relationship with user
     user = models.ManyToManyField(UserProfile)
@@ -92,7 +92,6 @@ class Page(models.Model):
     title = models.CharField(max_length=TITLE_MAX_LENGTH)
     image = models.ImageField(upload_to='image', blank=True)
     text = models.CharField(max_length=TEXT_MAX_LENGTH)
-    url = models.URLField()
 
     slug = models.SlugField(unique=True, null=False)
 

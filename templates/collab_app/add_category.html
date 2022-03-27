@@ -10,7 +10,7 @@
 {% block body_block %}
 	<h1>Add a Category</h1>
 	<div>
-		<form id="category_form" method="post" action="{% url 'collab_app:add_category' %}">
+		<form id="category_form" method="post" action="{{ current_url }}">
 			{% csrf_token %}
 			{% for hidden in form.hidden_fields %}
 				{{ hidden }}

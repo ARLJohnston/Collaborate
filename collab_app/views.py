@@ -369,7 +369,30 @@ def show_university_category(request,university_name_slug, category_name_slug):
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
 def add_general_category(request):
-    return HttpResponse("Fuckyou!")
+    """Takes url request, returns the creation page for new categories"""
+
+    if not request.user.is_authenticated:
+        return HttpResponse("User not authenticated.")
+
+    
+    current_url = resolve(request.path_info).url_name
+    
+    form = CategoryForm()
+    
+
+    if request.method == 'POST': # A HTTP POST?
+        form = CategoryForm(request.POST)
+        
+        if form.is_valid(): # Have we been provided with a valid form?
+            form.save(commit=True) # Save the new category to the database.
+            # Now that the category is saved, we could confirm this.
+            # For now, just redirect the user back to the index view.
+            return redirect('/collab_app/')
+
+        else:
+            print(form.errors)
+
+    return render(request, 'collab_app/add_category.html', {'form': form, 'current_url': current_url})
 
 def add_university_category(request, university_name_slug):
     """Takes url request, returns the creation page for new categories"""
@@ -385,6 +408,10 @@ def add_university_category(request, university_name_slug):
     
     if university is None:# You cannot  a Category that does not exist...
         return redirect('/collab_app/')
+    
+    form = CategoryForm()
+    
+    current_url = resolve(request.path_info).url_name
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
@@ -398,7 +425,7 @@ def add_university_category(request, university_name_slug):
         else:
             print(form.errors)
 
-    return render(request, 'collab_app/add_category.html', {'form': form})
+    return render(request, 'collab_app/add_category.html', {'form': form, 'current_url': current_url})
 
 class like_page_view(View):
     @method_decorator(login_required)

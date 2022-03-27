@@ -85,10 +85,18 @@ body {
     overflow: hidden;
     border-bottom: 1px solid var(--secondaryColor);
   }
+
+  img#logo{
+    float: left;
+  }
+
+  img#accountButton{
+    float: inline-block;
+    transform: translateX(-250%) translateY(-75%)
+  }
   
   /*Logo*/
   .topnav a {
-    float: left;
     display: block;
     text-align: center;
     padding: 14px 16px;
@@ -100,7 +108,7 @@ body {
   /*Search*/
   
   .topnav input[type=text] {
-    float: inline-end;
+    float: inline-block;
     padding: 6px;
     margin-top: 8px;
     margin-right: 16px;
@@ -128,8 +136,12 @@ body {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 10%;
     border-top: 1px solid var(--secondaryColor);
+  }
+
+  #accountButton{
+    border-radius: 50%;
+    border: 1px solid var(--secondaryColor);
   }
 
   @media screen and (min-width: 768px) {
@@ -149,15 +161,13 @@ body {
 
         position:fixed;
         top: 50%;
-        height:15%;
+        height: auto;
         right: 10px;
       }
   }
-
-#searchButton {
+.searchButton {
   margin-top: 8px;
   height: 30px;
-  background-image: url('../images/search.png');
   transform: translateY(50%);
 }
 

@@ -412,11 +412,21 @@ class like_page_view(View):
 def show_general_page(request, category_name_slug, page_name_slug):
     """Takes URL request, category slug, page slug, returns general page."""
     context_dict = {}
-    category = Category.objects.get(name=category_name_slug)
-    page = Page.objects.get(slug=page_name_slug)
 
-    context_dict["page"] = page
-    context_dict['category'] = category
+    try:
+        category = Category.objects.get(name=category_name_slug)
+        page = Page.objects.get(slug=page_name_slug)
+        comments = Comment.objects.filter(post=page)
+
+        context_dict['page'] = page
+        context_dict['category'] = category
+        context_dict['comments'] = comments
+
+    except:
+        context_dict['page'] = None
+        context_dict['category'] = None
+        context_dict['comments'] = None
+
     return render(request, 'collab_app/show_page.html', context_dict)
 
 
@@ -486,13 +496,12 @@ def add_university_page(request, university_name_slug, category_name_slug):
 
 
 def add_comment(request, page_name_slug):
+
     try: #Get page that the comment is for
         page = Page.objects.get(sulg=page_name_slug)
 
     except Page.DoesNotExist:
         page = None
-
-    form = CommentForm()
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -514,6 +523,10 @@ def search_bar(request):
     if request.method == 'GET':
         search = request.GET.get('search')
         print("[SEARCH QUERY]:", search)
+
+        if search == "":
+            return redirect(reverse('collab_app:index'))
+
         pages = Page.objects.all().filter(title__contains=search)
         print("[PAGES FOUND]:", pages)
         return render(request, 'collab_app/search_result.html', {'pages':pages})

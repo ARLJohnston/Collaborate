@@ -11,15 +11,14 @@ class UserProfile(models.Model):
     picture = models.ImageField(upload_to='profile_images', blank=True)
     biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
     # This includes email validation
-    email = models.EmailField(max_length=EMAIL_MAX_LENGTH, unique=True, null=False)
-
+    email = models.EmailField(max_length=EMAIL_MAX_LENGTH, null=False, default=True)
 
     def __str__(self):
         return self.user.username
 
 
 class Forum(models.Model):  # General or universities
-    NAME_MAX_LENGTH = 10
+    NAME_MAX_LENGTH = 69
     # A forum name does not need to be unique
     name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False, primary_key=True)
     slug = models.SlugField(unique=True)
@@ -37,7 +36,7 @@ class University(models.Model):
     name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True, primary_key=True)
 
     # One to one relationship with university
-    forum = models.OneToOneField(Forum, on_delete=models.CASCADE)
+    forum = models.OneToOneField(Forum, on_delete=models.CASCADE, default=True)
 
     # Many-to-many relationship with user
     user = models.ManyToManyField(UserProfile)
@@ -56,7 +55,7 @@ class University(models.Model):
 
 
 class Category(models.Model):
-    NAME_MAX_LENGTH = 10
+    NAME_MAX_LENGTH = 69
     # A category name does not need to be unique
     name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False)
     # Gets foreign key from Forum
@@ -82,7 +81,7 @@ class ForumCategoryAssociation(models.Model):
 
 class Page(models.Model):
     TEXT_MAX_LENGTH = 500
-    TITLE_MAX_LENGTH = 40
+    TITLE_MAX_LENGTH = 69
     # ID attribute is automatically added by django
     # one-to-many relationship with category
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -92,8 +91,9 @@ class Page(models.Model):
     title = models.CharField(max_length=TITLE_MAX_LENGTH)
     image = models.ImageField(upload_to='image', blank=True)
     text = models.CharField(max_length=TEXT_MAX_LENGTH)
+    url = models.URLField()
 
-    slug = models.SlugField(unique=True, null=False)
+    slug = models.SlugField(unique=False, null=False)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -109,10 +109,10 @@ class Page(models.Model):
 class Comment(models.Model):
     NAME_MAX_LENGTH = 300
     body = models.CharField(max_length=NAME_MAX_LENGTH)
-    pinned = models.BooleanField(blank=True)
+    pinned = models.BooleanField(blank=True, null=True)
 
     # one-to-many relationship with user
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=True)
     # one-to-many relationship with post
     post = models.ForeignKey(Page, on_delete=models.CASCADE, null=False)
 
@@ -128,4 +128,4 @@ class Like(models.Model):
     post = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
 
     # One-to-many relationship with user
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=True)

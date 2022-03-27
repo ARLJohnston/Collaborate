@@ -24,7 +24,7 @@ def styling_function(request, add_to_recent, context_dict):
         user_profile = UserProfile.objects.get(user=user_data)
         context_dict["profile_picture"] =  user_profile.picture
     except: #User does not exist
-        context_dict["profile_picture"] = "images/cog.png" 
+        pass
 
 def index(request):
     """Takes url request, returns Http response."""

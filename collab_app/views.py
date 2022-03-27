@@ -261,7 +261,8 @@ def universities(request):
         user_data = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user_data)
         user_university = University.objects.get(user=user_profile)
-        universities = University.objects.all().filter(user = user_profile)
+        universities = University.objects.all()
+        #universities = University.objects.all().filter(user = user_profile)
         context_dict['universities'] = universities
     except: #No associated universities
         context_dict['universities'] = None

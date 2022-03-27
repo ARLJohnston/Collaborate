@@ -31,23 +31,25 @@
 	</div>
 
 	<div>
-		<h1>Collaborate</h1>
+		<h1 class="centerText">Collaborate</h1>
 	</div>
 
 	<div>
-		<form action="{% url 'collab_app:login' %}">
+		<img id="center" src="{% static 'images/logo.png' %}" alt = "Collaborate">
+	</div>
+
+	<div>
+		<form class="inlineElements" action="{% url 'collab_app:login' %}">
 			<input type="submit" value="Log in">
 		</form>
-	</div>
 	
-	<div>
-		<form action="{% url 'collab_app:sign_up' %}">
+		<form class="inlineElements" action="{% url 'collab_app:sign_up' %}">
 			<input type="submit" value="Sign-up">
 		</form>
 	</div>
 
 	<div>
-		<form action="{% url 'collab_app:general' %}">
+		<form class="inlineElements" action="{% url 'collab_app:general' %}">
 			<input type="submit" value="Continue to main site">
 		</form>
 	</div>

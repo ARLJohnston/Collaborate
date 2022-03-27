@@ -19,6 +19,7 @@ body {
     --visitedColor: #8be9fd;
     --theme-icon: url(../images/moon.png);
 }
+
 a:visited {
   color: var(--visitedColor);
 }
@@ -187,4 +188,25 @@ a:visited {
   border-bottom: 1px solid var(--secondaryColor);
 
 }
+
+img#center {
+  position: relative;
+  left: 45%;
+  right: 50%;
+  height:100px;
+}
+
+.centerText{
+  justify-content: center;
+  text-align: center;
+}
+
+.inlineElements{
+  display: inline;
+  width: 50px;
+  position: relative;
+  left:43%;
+}
+
+
 

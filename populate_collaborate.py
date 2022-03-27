@@ -1,4 +1,5 @@
 import os
+import random
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'collaborate.settings')
@@ -6,78 +7,126 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 import django
 
 django.setup()
-from collab_app.models import Category, Page, Comment, Like, University, Forum
+from collab_app.models import Category, Page, Comment, Like, University, Forum, UserProfile
+from django.contrib.auth.models import User
 
 
 def populate():
-    universities = [
-        {'title': 'University Page',
-         'description': 'Welcome to university pages'}
+    university_comments = [
+        {'body': 'I don\'t know'},
+        {'body': 'Tea is better than coffee'}
+    ]
+
+    university_pages = [
+        {'title': 'Where are the best coffee shops?',
+         'text': 'I\'m a first year looking for the best coffee shops around campus. Any suggestions?',
+         'comments': university_comments
+         }
     ]
 
     university_categories = [
-        {'title': 'Categories',
-         'description': 'catergories'}
+        {'name': 'Student life',
+         'pages': university_pages},
+        {'name': 'Uni work',
+         'pages': university_pages}
     ]
 
-    general_categories = [
-        {'title': 'Categories',
-         'description': 'catergories'}
+    universities = [
+        {
+            "name": "University of glasgow",
+            "categories": university_categories
+        },
+        {
+            "name": "University of Strathclyde",
+            "categories": university_categories
+        }
+    ]
+
+    general_comments = [
+        {'body': 'First'},
+        {'body': 'Glasgow is the best uni!'}
     ]
 
     general_pages = [
-        {'title': 'How to do better in Computer Science',
-         'description': 'Just looking for more stackoverflow',
-         }]
-
-    university_pages = [
-        {'title': 'How to do better in Computer Science',
-         'description': 'Just looking for more stackoverflow'}
+        {'title': 'I have no friends. Help!',
+         'text': 'I moved to the city two months ago and I still do not know anyone. How do you make new friends at '
+                 'uni?',
+         'comments': university_comments
+         },
+        {'title': 'Any tips to do better at uni?',
+         'text': 'I\'m finding first year really difficult. Not only the work, but also I\'m only sleeping an average '
+                 'of 4h a day. Is anyone having a similar experience?',
+         'comments': university_comments
+         }
     ]
-    general_comments = [
-        {'post': 'How to do better in Computer Science',
-         'body': 'Just looking for more stackoverflow'}
-    ]
 
-    university_comments = [
-        {'title': 'How to do better in Computer Science',
-         'description': 'Just looking for more stackoverflow'}
+    general_categories = [
+        {'name': 'Managing work, uni and social life',
+         'pages': general_pages}
     ]
 
     # Print out the categories we have added.
-    forums = {'General': {'Category': general_categories, 'Page': general_pages, 'Comment': general_comments},
-             'Universities': {'University': universities, 'Category': university_categories, 'Page': university_pages,
-                              'Comment': university_comments}
-             }
+    forums = {'General': {'Category': general_categories},
+              'Universities': {'University': universities}
+              }
+
+    users = [{'id': 1, 'user_name': 'AlistairJ', 'superuser': True, 'email': 'alistair1234@test.com'},
+             {'id': 2, 'user_name': 'HollyEdees123', 'superuser': True, 'email': 'holly_edees@test.com'},
+             {'id': 3, 'user_name': 'MaxWW', 'superuser': True, 'email': 'MaxWW02@test.com'},
+             {'id': 4, 'user_name': 'Gulati_Naman', 'superuser': True, 'email': '00naman@test.com'},
+             {'id': 5, 'user_name': 'MarinaSJP', 'superuser': False, 'email': 'marinasj@test.com'}]
+
+    for user in users:
+        add_user(user['id'], user['user_name'], user['superuser'])
+
+    all_users = User.objects.all()
+    user_list = []
+    for i in range(len(all_users)):
+        user_id = all_users[i].id
+        new_user = add_user_profile(all_users[i], user_id, users[i]['email'])
+        user_list.append(new_user)
 
     for forum, forum_data in forums.items():
         f = add_forum(forum)
         if forum == 'General':
-            for c in forum_data['Category']:
-                cat = add_cat(c, f)
-                for p in forum_data['Page']:
-                    post = add_page(cat, p['title'])
-                    for com in forum_data['Comment']:
-                        add_comment(post, com['body'])
+            for category in forum_data['Category']:  # general_categories
+                print("inside category")
+                cat = add_cat(category['name'], f)
+                for page in category['pages']:  # page inside each category
+                    print("inside page")
+                    p = add_page(cat, page['title'], page['text'], random.choice(user_list))
+                    for com in page['comments']:  # every comment inside every page
+                        print("inside comment")
+                        add_comment(p, com['body'], random.choice(user_list))
 
         elif forum == 'Universities':
-            for u in forum_data['University']:
-                uni = add_university(u)
-                for c in forum_data['Category']:
-                    cat = add_cat(c, f)
-                    for p in forum_data['Page']:
-                        post = add_page(cat, p['title'])
-                        for com in forum_data['Comment']:
-                            add_comment(post, com['body'])
+            for university in forum_data['University']:
+                print("inside unis")
+                uni = add_university(university)
+                for category in university['categories']:  # general_categories
+                    print("inside category")
+                    cat = add_cat(category['name'], f)
+                    for page in category['pages']:  # page inside each category
+                        print("inside page")
+                        p = add_page(cat, page['title'], page['text'], random.choice(user_list))
+                        for com in page['comments']:  # every comment inside every page
+                            print("inside comments")
+                            add_comment(p, com['body'], random.choice(user_list))
 
-    '''
-    for c in Category.objects.all():
-        for p in Page.objects.filter(category=c):
-            print(f'- {c}: {p}')'''
+
+def add_user_profile(user, userID, email):
+    u = UserProfile.objects.get_or_create(user=user, user_id=userID, email=email)[0]
+    u.save()
+    return u
 
 
-def add_page(cat, title):
-    p = Page.objects.get_or_create(category=cat, title=title)[0]
+def add_user(user_id, user_name, superuser):
+    u = User.objects.get_or_create(id=user_id, username=user_name, is_superuser=superuser)
+    return u
+
+
+def add_page(cat, title, text, user):
+    p = Page.objects.get_or_create(category=cat, title=title, text=text, user=user)[0]
     p.save()
     return p
 
@@ -94,8 +143,8 @@ def add_like(comment):
     return l
 
 
-def add_comment(post, body):
-    l = Comment.objects.get_or_create(post=post, body=body)[0]
+def add_comment(post, body, user):
+    l = Comment.objects.get_or_create(post=post, body=body, user=user)[0]
     l.save()
     return l
 

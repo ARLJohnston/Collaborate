@@ -12,19 +12,41 @@
 {% endblock %}
 
 {% block body_block %}
-{% if category %}
+{% if university %}
+	{% if user.authenticated %}
+		<h1>{{ category.name }}</h1>
+		<div>
+		{% if pages %}
+		<ul>
+			{% for page in pages %}
+				<a href="{% url 'collab_app:show_university_page' university.slug page.category.slug page.slug%}">{{ page.title }}</a>
+				{% if page.image %}
+					<img src="{{ page.image.url }}" alt="image" />
+				{% else %}
+					{{ page.text|truncatewords:50 }}
+				{% endif %}
+				</li>
+			{% endfor %}
+		</ul>	
+		{% else %}
+			There are currently no posts.
+		{% endif %}
+	{% else %}
+		<h1>NOT LOGGED IN!</h1>
+	{% endif %}
+
+{% elif category %}
 	<h1>{{ category.name }}</h1>
 	<div>
 	{% if pages %}
 	<ul>
 		{% for page in pages %}
-		<a href="{% url 'collab_app:show_general_page' page.category.slug page.slug%}">{{ page.title }}</a>
-		{% if page.image %}
-			<img src="{{ page.image.url }}" alt="image" />
-		{% else %}
-			{{ page.text|truncatewords:50 }}
-		{% endif %}
-		</li>
+			<a href="{% url 'collab_app:show_general_page' page.category.slug page.slug%}">{{ page.title }}</a>
+			{% if page.image %}
+				<img src="{{ page.image.url }}" alt="image" />
+			{% else %}
+				{{ page.text|truncatewords:50 }}
+			{% endif %}
 		{% endfor %}
 	</ul>	
 	{% else %}
@@ -44,5 +66,6 @@
 		</form>
 	</div>
 	</div>
-	{% endif %}
+{% endif %}
+
 {% endblock %}

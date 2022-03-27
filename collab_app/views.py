@@ -1,4 +1,5 @@
 from sre_parse import CATEGORIES
+from unicodedata import category
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -243,7 +244,10 @@ def general(request):
     
     styling_function(request, False, context_dict)
 
-    category_list = Category.objects.order_by('name')
+    bad_category_slugs = [cat.category.slug for cat in ForumCategoryAssociation.objects.all()]
+    category_list = Category.objects.order_by('name').exclude(slug__in=bad_category_slugs)
+
+
     context_dict["categories"] = category_list
 
     return render(request, 'collab_app/general.html', context=context_dict)
@@ -418,18 +422,31 @@ def show_general_page(request, category_name_slug, page_name_slug):
 
 def show_university_page(request, university_name_slug, category_name_slug, page_name_slug):
     """Takes URL request, university slug, category slug, page slug, returns university page."""
-    context_dict = {}
-    page = Page.objects.filter(slug=page_name_slug)
-    context_dict["page"] = page
-    context_dict = {}
+
+    try:
+        context_dict = {}
+        university = University.objects.get(slug=university_name_slug)
+        category = Category.objects.get(slug=category_name_slug)
+        page = Page.objects.get(slug=page_name_slug)
+
+        context_dict["university"] = university
+        context_dict["category"] = category
+        context_dict["page"] = page
+
+    except:
+        context_dict["university"] = None
+        context_dict["category"] = None
+        context_dict["page"] = None
+
+    """
     comments =  Comment.Objects.get(page = page_name_slug)
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment_form.save()
-    
     context_dict['comment_form']  = comment_form  
     context_dict['comments'] = comments
+    """
 
     return render(request, 'collab_app/show_page.html', context_dict)
 

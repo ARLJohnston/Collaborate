@@ -1,3 +1,4 @@
+from ast import For
 from sre_parse import CATEGORIES
 from unicodedata import category
 from django.shortcuts import redirect, render
@@ -301,27 +302,26 @@ def show_university(request, university_name_slug):
     print("[show_university]:=", context_dict)
     return render(request, 'collab_app/show_university.html', context=context_dict)
 
-def add_university(request, university_name_slug):
+def add_university(request):
     """Takes url request, returns the creation page for new universities"""
     
-    context_dict = {}
-
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
+
+    form = UniversityForm()
     
     if request.method == 'POST':# A HTTP POST?
         form = UniversityForm(request.POST)
         
-        if form.is_valid():# Have we been provided with a valid form?
-            # Save the new category to the database.
-            form.save(commit=True)
-            # Now that the category is saved, we could confirm this.
-            # For now, just redirect the user back to the index view.
-            context_dict['form'] = form
+        if form.is_valid():
+            new_uni = form.save(commit=False)
+            new_uni.name = form.cleaned_data['name']
+            new_uni.forum = Forum.objects.get_or_create(name=form.cleaned_data['name'])[0]
+            new_uni.save()
             return redirect('/collab_app/')
         else:
             print(form.errors)
-    return render(request, 'collab_app/add_university.html', context_dict)
+    return render(request, 'collab_app/add_university.html', {'form':form})
 
 def show_general_category(request, category_name_slug):
     """Takes url request, returns a specific university page"""
@@ -368,7 +368,6 @@ def show_university_category(request, university_name_slug, category_name_slug):
         context_dict['university'] = None
 
     styling_function(request, False, context_dict)
-    print("[[[]]] =",university_name_slug, category_name_slug)
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
@@ -386,11 +385,12 @@ def add_general_category(request):
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
+        forum = Forum.objects.get_or_create(name="general", slug="general")
         
-        if form.is_valid(): # Have we been provided with a valid form?
-            form.save(commit=True) # Save the new category to the database.
-            # Now that the category is saved, we could confirm this.
-            # For now, just redirect the user back to the index view.
+        if form.is_valid():
+            new_cat = form.save(commit=False)
+            new_cat.forum = forum[0]
+            new_cat.save()
             return redirect('/collab_app/')
 
         else:
@@ -401,35 +401,35 @@ def add_general_category(request):
 def add_university_category(request, university_name_slug):
     """Takes url request, returns the creation page for new categories"""
 
+    context_dict = {}
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
 
     try:
         university = University.objects.get(slug=university_name_slug)
+        form = CategoryForm(request.POST)
+        context_dict['form'] = form
 
     except University.DoesNotExist:
-        university = None
-    
-    if university is None:# You cannot  a Category that does not exist...
         return redirect('/collab_app/')
-    
-    form = CategoryForm()
-    
-    current_url = resolve(request.path_info).url_name
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
+        forum = university.forum
         
-        if form.is_valid(): # Have we been provided with a valid form?
-            form.save(commit=True) # Save the new category to the database.
-            # Now that the category is saved, we could confirm this.
-            # For now, just redirect the user back to the index view.
+        if form.is_valid():
+            new_cat = form.save(commit=False)
+            new_cat.name = form.cleaned_data['name']
+            new_cat.forum = forum
+            new_cat.save()
+            ForumCategoryAssociation.objects.get_or_create(category=new_cat, forum=forum)     
             return redirect('/collab_app/')
 
         else:
             print(form.errors)
 
-    return render(request, 'collab_app/add_category.html', {'form': form, 'current_url': current_url})
+    return render(request, 'collab_app/add_category.html', context_dict)
 
 class like_page_view(View):
     @method_decorator(login_required)

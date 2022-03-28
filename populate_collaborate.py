@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 import django
 
 django.setup()
-from collab_app.models import Category, Page, Comment, Like, University, Forum, UserProfile, ForumCategoryAssociation
+from collab_app.models import Category, Page, Comment, University, Forum, UserProfile, ForumCategoryAssociation
 from django.contrib.auth.models import User
 
 
@@ -184,7 +184,7 @@ def add_pages_comments(category, cat, user_list):
 
 
 def add_user_profile(user, user_id):
-    u = UserProfile.objects.get_or_create(user=user, user_id=user_id,)[0]
+    u = UserProfile.objects.get_or_create(user=user, user_id=user_id, picture='/Collaborate/media/profile_images/wallpaper.png')[0]
     u.save()
     return u
 

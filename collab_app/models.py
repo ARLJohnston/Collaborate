@@ -3,7 +3,6 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-
 class UserProfile(models.Model):
     BIO_MAX_LENGTH = 500
     EMAIL_MAX_LENGTH = 254

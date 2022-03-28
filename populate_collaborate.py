@@ -11,6 +11,7 @@ from collab_app.models import Category, Page, Comment, Like, University, Forum, 
 from django.contrib.auth.models import User
 
 
+
 def populate():
     glasgow_coffee_comments = [
         {'body': 'I don\'t know'},
@@ -56,14 +57,14 @@ def populate():
          'pages': glasgow_uni_work_pages}
     ]
 
-    glasgow_sun_comments = [
+    cambridge_sun_comments = [
         {'body': 'So pretty!'},
     ]
 
     cambridge_student_life_pages = [
         {'title': 'Sunny day in Cambridge <3',
          'text': 'I\'m a first year looking for the best coffee shops around campus. Any suggestions?',
-         'comments': glasgow_sun_comments
+         'comments': cambridge_sun_comments
          },
     ]
 
@@ -133,7 +134,9 @@ def populate():
                   {'id': 442983, 'user_name': 'Gulati_Naman', 'superuser': True, 'first_name': 'Naman',
                    'last_name': 'Gulati', 'email': '00naman@test.com'},
                   {'id': 594999, 'user_name': 'MarinaSJP', 'superuser': True, 'first_name': 'Marina',
-                   'last_name': 'San Jose Pena', 'email': 'marinasj@test.com'}]
+                   'last_name': 'San Jose Pena', 'email': 'marinasj@test.com'},
+                  {'id': 267564, 'user_name': 'JayYuen', 'superuser': True, 'first_name': 'KaiTing',
+                   'last_name': 'Yuen', 'email': 'JayYuen@test.com'}]
 
     for user in test_users:
         add_user(user['id'], user['user_name'], user['superuser'], user['email'], user['first_name'], user['last_name'])
@@ -157,8 +160,8 @@ def populate():
         else:
             university_categories = forum_data['University']
             print("inside unis")
-            uni = add_university(forum, random.choice(user_list), f)
-            for category in university_categories:  # general_categories
+            add_university(forum, random.choice(user_list), f)
+            for category in university_categories:  # university_categories
                 print("inside category")
                 cat = add_cat(category['name'], f)
                 forum_category = add_forum_category_association(f, cat)
@@ -181,14 +184,14 @@ def add_pages_comments(category, cat, user_list):
 
 
 def add_user_profile(user, user_id):
-    u = UserProfile.objects.get_or_create(user=user, user_id=user_id)[0]
+    u = UserProfile.objects.get_or_create(user=user, user_id=user_id,)[0]
     u.save()
     return u
 
 
 def add_user(user_id, user_name, superuser, email, first_name, last_name):
     u = User.objects.get_or_create(id=user_id, username=user_name, is_superuser=superuser, email=email,
-                                   first_name=first_name, last_name=last_name)
+                                   first_name=first_name, last_name=last_name, password=user_name + '27')
     return u
 
 
@@ -204,29 +207,23 @@ def add_cat(name, forum):
     return c
 
 
-def add_like(comment):
-    l = Like.objects.get_or_create(comment=comment)[0]
-    l.save()
-    return l
-
-
 def add_comment(post, body, user):
-    l = Comment.objects.get_or_create(post=post, body=body, user=user)[0]
-    l.save()
-    return l
+    com = Comment.objects.get_or_create(post=post, body=body, user=user)[0]
+    com.save()
+    return com
 
 
 def add_university(name, user, forum):
-    l = University.objects.get_or_create(name=name, forum=forum)[0]
-    l.user.set([user])
-    l.save()
-    return l
+    uni = University.objects.get_or_create(name=name, forum=forum)[0]
+    uni.user.set([user])
+    uni.save()
+    return uni
 
 
 def add_forum(name):
-    l = Forum.objects.get_or_create(name=name)[0]
-    l.save()
-    return l
+    forum = Forum.objects.get_or_create(name=name)[0]
+    forum.save()
+    return forum
 
 
 if __name__ == '__main__':

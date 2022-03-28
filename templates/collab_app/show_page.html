@@ -38,6 +38,15 @@
 	{% for comment in comments %}
 	<ul>
 		{{ comment }}
+		<strong id="comment_like_count">{{ comment.likes }}</strong> Likes
+		{% if user.is_authenticated %}
+		<button id="like_btn_comment"
+					data-commentid="{{ comment.id }}"
+		 			class="btn btn-primary btn-sm"
+					type="button">
+			Like Comment
+		</button>
+		{% endif %}
 	</ul>
 	{% endfor %}
 {% endif %}

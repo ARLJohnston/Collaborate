@@ -423,6 +423,24 @@ class like_page_view(View):
 
         return HttpResponse(page.likes)
 
+class like_comment_view(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        comment_id = request.GET['comment_id']
+
+        try:
+            comment = Comment.objects.get(id=int(comment_id))
+        except Comment.DoesNotExist:
+            return HttpResponse(-1)
+        except ValueError:
+            return HttpResponse(-1)
+
+        comment.likes = comment.likes + 1
+        comment.save()
+
+        return HttpResponse(comment.likes)
+
+
 def show_general_page(request, category_name_slug, page_name_slug):
     """Takes URL request, category slug, page slug, returns general page."""
     context_dict = {}

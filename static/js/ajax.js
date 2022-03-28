@@ -11,3 +11,17 @@ $(document).ready(function() {
 				})
 	});
 });
+
+$(document).ready(function() {
+	$('#like_btn_comment').click(function() {
+		var catecommentIdVar;
+		catecommentIdVar = $(this).attr('data-commentid');
+
+		$.get('/collab_app/like_comment/',
+			{'comment_id': catecommentIdVar},
+			function(data) {
+				$('#comment_like_count').html(data);
+				$('#comment_like_btn').hide();
+				})
+	});
+});

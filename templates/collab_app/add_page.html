@@ -8,9 +8,23 @@
 {% endblock %}
 
 {% block body_block %}
+{% if university %}
+<h1>Add a Post</h1>
+<div>
+	<form id="add_page_form" method="post" action="{% url 'collab_app:add_university_page' university.slug category.slug %}">
+		{% csrf_token %}
+		{% for field in form.visible_fields %}
+			{{ field.errors }}
+			{{ field.help_text }}
+			{{ field }}
+		{% endfor %}
+		<input type="submit" name="submit" value="Post" />
+	</form>
+</div>
+{% else %}
 	<h1>Add a Post</h1>
 	<div>
-		<form id="add_page_form" method="post" action="{% url 'collab_app:add_page' category.slug %}">
+		<form id="add_page_form" method="post" action="{% url 'collab_app:add_general_page' category.slug %}">
 			{% csrf_token %}
 			{% for field in form.visible_fields %}
 				{{ field.errors }}
@@ -20,4 +34,5 @@
 			<input type="submit" name="submit" value="Post" />
 		</form>
 	</div>
+{% endif %}
 {% endblock %}

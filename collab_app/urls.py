@@ -25,7 +25,7 @@ urlpatterns = [
       path('general/<slug:category_name_slug>/<slug:page_name_slug>/',
             views.show_general_page, name='show_general_page'),
 
-      path('general/<slug:category_name_slug>/add_page', views.add_general_page, name='add_page'),
+      path('general/<slug:category_name_slug>/add_page', views.add_general_page, name='add_general_page'),
 
       # University pages
       path('universities/', views.universities, name='universities'),

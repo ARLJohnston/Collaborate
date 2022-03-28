@@ -77,7 +77,6 @@ def sign_up(request):
             profile.save()
 
             is_registered = True
-            print("HERHEHRHEHRHERH")
                     
             return redirect(reverse('collab_app:login'))
 
@@ -260,8 +259,6 @@ def show_university(request, university_name_slug):
         context_dict['university'] = None
         context_dict['categories'] = None
 
-
-    print("[show_university]:=", context_dict)
     styling_function(request, False, context_dict)
     return render(request, 'collab_app/show_university.html', context=context_dict)
 
@@ -286,6 +283,7 @@ def add_university(request):
             return redirect('/collab_app/')
         else:
             print(form.errors)
+
     styling_function(request, True, context_dict)
     return render(request, 'collab_app/add_university.html', {'form':form})
 
@@ -306,7 +304,6 @@ def show_general_category(request, category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
-    print("[SHOW_GENERAL_CATEGORY] :=", context_dict)
     styling_function(request, False, context_dict)
 
     return render(request, 'collab_app/show_category.html', context=context_dict)
@@ -344,13 +341,13 @@ def add_general_category(request):
 
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
-
-    current_url = resolve(request.path_info).url_name
     
     form = CategoryForm()
+    context_dict['form'] = form
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
+        context_dict['form'] = form
         forum = Forum.objects.get_or_create(name="general", slug="general")
         
         if form.is_valid():
@@ -363,7 +360,7 @@ def add_general_category(request):
             print(form.errors)
             
     styling_function(request, True, context_dict)
-    return render(request, 'collab_app/add_category.html', {'form': form, 'current_url': current_url})
+    return render(request, 'collab_app/add_category.html', context_dict)
 
 def add_university_category(request, university_name_slug):
     """Takes url request, returns the creation page for new categories"""
@@ -397,8 +394,8 @@ def add_university_category(request, university_name_slug):
                 new_cat.name = form.cleaned_data['name']
                 new_cat.forum = forum
                 new_cat.save()
-                ForumCategoryAssociation.objects.get_or_create(category=new_cat, forum=forum)     
-            return redirect(reverse('collab_app:index'))
+                ForumCategoryAssociation.objects.get_or_create(category=new_cat, forum=forum)
+            return redirect(reverse('collab_app:show_university ', kwargs={'university_name_slug': university_name_slug}))
 
         else:
             print(form.errors)
@@ -491,6 +488,9 @@ def show_university_page(request, university_name_slug, category_name_slug, page
                 comment.post = page
                 comment.pinned = False
                 comment.save()
+                return redirect(reverse('collab_app:show_general_category',
+                    kwargs={'university_name_slug':university_name_slug,
+                            'category_name_slug': category_name_slug}))
 
         context_dict['form'] = form
 
@@ -529,11 +529,47 @@ def add_general_page(request, category_name_slug):
     
     context_dict = {'form': form, 'category': category}
 
-    styling_function(request, True, context_dict)
+    styling_function(request, False, context_dict)
     return render(request, 'collab_app/add_page.html', context=context_dict)
 
 def add_university_page(request, university_name_slug, category_name_slug):
-    pass
+    """Takes url request, returns the creation page for new university pages"""
+    
+    context_dict = {}
+
+    if not request.user.is_authenticated:
+        return HttpResponse("User not authenticated.")
+
+    try:
+        university = University.objects.get(slug=university_name_slug)
+        category = Category.objects.get(slug=category_name_slug)
+        user_data = User.objects.get(username=request.user.username)
+        user_profile = UserProfile.objects.get(user=user_data)
+
+    except Category.DoesNotExist:
+        category = None
+        return redirect('/collab_app/')
+    
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+        if form.is_valid():
+            if category:
+                page = form.save(commit=False)
+                page.category = category
+                page.user = user_profile
+                page.save()
+                return redirect(reverse('collab_app:show_university_category',
+                    kwargs={'category_name_slug': category_name_slug,
+                            'university_name_slug': university_name_slug}))
+        else:
+            print(form.errors)
+    
+    context_dict['form'] = form 
+    context_dict['category'] =  category
+    context_dict['university'] = university
+
+    styling_function(request, True, context_dict)
+    return render(request, 'collab_app/add_page.html', context=context_dict)
 
 
 def add_comment(request, page_name_slug):

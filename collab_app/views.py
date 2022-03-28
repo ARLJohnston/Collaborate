@@ -10,7 +10,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
-from collab_app.forms import JoinUniversity, UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
+from collab_app.forms import FindUniversity, UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
 from collab_app.models import ForumCategoryAssociation, UserProfile, University, Category, Page, Comment, Forum
 
 def styling_function(request, add_to_recent, context_dict):
@@ -62,7 +62,6 @@ def sign_up(request):
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(request.POST)
         profile_form = UserProfileForm(request.POST)
-        university_form = UniversityForm(request.POST)
 
         # If the two forms are valid...
         if user_form.is_valid()  and  profile_form.is_valid():
@@ -227,16 +226,17 @@ def universities(request):
         user_data = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user_data)
         user_university = University.objects.get(user=user_profile)
+
         universities = University.objects.all()
         universities = University.objects.all().filter(user = user_profile)
         context_dict['universities'] = universities
     except: #No associated universities
         context_dict['universities'] = None
 
-    context_dict['form'] = JoinUniversity()
+    context_dict['form'] = FindUniversity()
 
     if request.method == 'POST':
-        form = JoinUniversity(request.POST)
+        form = FindUniversity(request.POST)
         if form.is_valid():
             add_uni = University.objects.filter(name__icontains=form.cleaned_data['universities'])
             context_dict['universities'] = add_uni
@@ -260,6 +260,7 @@ def show_university(request, university_name_slug):
     except Category.DoesNotExist:
         context_dict['university'] = None
         context_dict['categories'] = None
+
 
     print("[show_university]:=", context_dict)
     styling_function(request, False, context_dict)

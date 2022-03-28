@@ -69,5 +69,5 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ('picture', 'biography','email', )
 
-class JoinUniversity(forms.Form):
-        universities = forms.CharField(label='unis_to_join', max_length=100)
+class FindUniversity(forms.Form):
+        universities = forms.CharField(label='Search for a University', max_length=100)

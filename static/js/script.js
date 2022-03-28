@@ -81,7 +81,4 @@ function addPageToRecent(page = "collab_app:index"){
 function onLoad(page){
 	//Scripts that run when the page loads
 	loadTheme();
-	if(page.includes("collab_app:")){
-		addPageToRecent(page);
-	}
 }

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from collab_app.models import UserProfile, Forum, University, Category, Page, Comment, Like
+from collab_app.models import UserProfile, Forum, University, Category, Page, Comment
 
 
 class CommentForm(forms.ModelForm):

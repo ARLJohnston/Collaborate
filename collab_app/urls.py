@@ -48,5 +48,6 @@ urlpatterns = [
 
       # Like AJAX request
       path('like_page/', views.like_page_view.as_view(), name='like_page'),
+      path('like_comment/', views.like_comment_view.as_view(), name='like_comment'),
 ]
 

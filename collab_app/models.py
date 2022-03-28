@@ -92,6 +92,7 @@ class Page(models.Model):
     title = models.CharField(max_length=TITLE_MAX_LENGTH)
     image = models.ImageField(upload_to='image', blank=True)
     text = models.CharField(max_length=TEXT_MAX_LENGTH)
+    likes = models.IntegerField(default=0)
 
     slug = models.SlugField(unique=False, null=False)
 
@@ -110,6 +111,7 @@ class Comment(models.Model):
     NAME_MAX_LENGTH = 300
     body = models.CharField(max_length=NAME_MAX_LENGTH)
     pinned = models.BooleanField(blank=True, null=True)
+    likes = models.IntegerField(default=0)
 
     # one-to-many relationship with user
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=True)
@@ -118,14 +120,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.body
-
-
-class Like(models.Model):
-    # one-to-many relationship with comment
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
-
-    # one-to-many relationship with post
-    post = models.ForeignKey(Page, on_delete=models.CASCADE, null=True)
-
-    # One-to-many relationship with user
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=False, default=True)

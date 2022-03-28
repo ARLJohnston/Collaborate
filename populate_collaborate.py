@@ -1,6 +1,8 @@
 import os
 import random
 
+from django.template.defaultfilters import slugify
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'collaborate.settings')
 
@@ -104,11 +106,11 @@ def populate():
                         print("inside comment")
                         add_comment(p, com['body'], random.choice(user_list))
 
-        elif forum == 'University':
+        elif forum == 'Universities':
             for university in forum_data['University']:
                 print("inside unis")
-                uni = add_university(university)
-                for category in university['categories']:  # university_categories
+                uni = add_university(university['name'], random.choice(user_list), f)
+                for category in university['categories']:  # general_categories
                     print("inside category")
                     cat = add_cat(category['name'], f)
                     for page in category['pages']:  # page inside each category
@@ -155,8 +157,9 @@ def add_comment(post, body, user):
     return l
 
 
-def add_university(name):
-    l = University.objects.get_or_create(name=name)[0]
+def add_university(name, user, forum):
+    l = University.objects.get_or_create(name=name, forum=forum)[0]
+    l.user.set([user])
     l.save()
     return l
 

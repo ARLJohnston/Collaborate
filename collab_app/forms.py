@@ -26,12 +26,12 @@ class CategoryForm(forms.ModelForm):
 class PageForm(forms.ModelForm):
     #  text entry for users
     title = forms.CharField(max_length=Page.TITLE_MAX_LENGTH, help_text="Please enter the title of the page.")
-    image = forms.ImageField() # [HOT-FIX: removed args] upload_to='image', blank=True, help_text="Upload a picture."
+    image = forms.ImageField(required=False, help_text="Upload a picture.") # [HOT-FIX: removed args] upload_to='image', blank=True, help_text="Upload a picture."
     text = forms.CharField(max_length=Page.TEXT_MAX_LENGTH, help_text="Type in here.")
 
     class Meta:
         model = Page
-        exclude = ('category', 'user')
+        exclude = ('category', 'user','slug')
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -68,3 +68,6 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('picture', 'biography','email', )
+
+class JoinUniversity(forms.Form):
+        universities = forms.CharField(label='unis_to_join', max_length=100)

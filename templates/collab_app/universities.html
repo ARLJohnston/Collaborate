@@ -8,6 +8,11 @@
 {% endblock %}
 
 {% block body_block %}
+<h1>Fuck you</h1>
+<form id="join_uni_form" method="POST" >
+	{% csrf_token %}
+	{{ form.as_p}}
+</form>
 {% if universities %}
 	<ul>
 	{% for university in universities %}

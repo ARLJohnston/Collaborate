@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.urls import reverse
+from sympy import true
 
 
 class UserProfile(models.Model):
@@ -17,7 +18,20 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+class Forum(models.Model):  # General or universities
+    NAME_MAX_LENGTH = 69
+    # A forum name does not need to be unique
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False, primary_key=True)
+    slug = models.SlugField(unique=True)
 
+    # university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Forum, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 
 class University(models.Model):
@@ -25,7 +39,7 @@ class University(models.Model):
     name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True, primary_key=True)
 
     # One to one relationship with university
-    # forum = models.OneToOneField(Forum, on_delete=models.CASCADE, default=True)
+    forum = models.OneToOneField(Forum, on_delete=models.CASCADE, default=True)
 
     # Many-to-many relationship with user
     user = models.ManyToManyField(UserProfile)
@@ -42,21 +56,6 @@ class University(models.Model):
     def __str__(self):
         return self.name
 
-
-class Forum(models.Model):  # General or universities
-    NAME_MAX_LENGTH = 69
-    # A forum name does not need to be unique
-    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=False, null=False, primary_key=True)
-    slug = models.SlugField(unique=True)
-
-    university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Forum, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
 
 class Category(models.Model):
     NAME_MAX_LENGTH = 69

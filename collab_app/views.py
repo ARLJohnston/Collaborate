@@ -10,7 +10,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 
-from collab_app.forms import UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
+from collab_app.forms import JoinUniversity, UserForm, UserProfileForm, UniversityForm, PageForm, CategoryForm, CommentForm
 from collab_app.models import ForumCategoryAssociation, UserProfile, University, Category, Page, Comment, Forum
 
 def styling_function(request, add_to_recent, context_dict):
@@ -79,57 +79,33 @@ def sign_up(request):
         university_form = UniversityForm(request.POST)
 
         # If the two forms are valid...
-        if user_form.is_valid()  and  profile_form.is_valid() and  university_form.is_valid():
+        if user_form.is_valid()  and  profile_form.is_valid():
             # Save the user's form data to the database.
             user = user_form.save()
-
-            # Now we hash the password with the set_password method.
-            # Once hashed, we can update the user object.
             user.set_password(user.password)
             user.save()
 
-            # Now sort out the UserProfile instance.
-            # Since we need to set the user attribute ourselves,
-            # we set commit=False. This delays saving the model
-            # until we're ready to avoid integrity problems.
             profile = profile_form.save(commit=False)
             profile.user = user
-
-            # Did the user provide a profile picture?
-            # If so, we need to get it from the input form and
-            #put it in the UserProfile model.
             if 'picture' in request.FILES:
                 profile.picture = request.FILES['picture']
-            
-            # Now we save the UserProfile model instance.
-            
-            
             profile.save()
-            university = university_form.save(commit=False)
-            university.save()
-            university.user.add(profile) 
 
-
-            # Update our variable to indicate that the template
-            # registration was successful.
             is_registered = True
-            print(university,user,profile)
+            print("HERHEHRHEHRHERH")
+                    
+            return redirect(reverse('collab_app:login'))
 
         else:
-            # Invalid form or forms - mistakes or something else?
-            # Print problems to the terminal.
             print(user_form.errors, profile_form.errors)
 
     else:
-
-        # Not a HTTP POST, so we render our form using two ModelForm instances.
-        # These forms will be blank, ready for user input.
         user_form = UserForm()
         profile_form = UserProfileForm()
-        university_form = UniversityForm()
 
-    context_dict = {'user_form': user_form,'university_form' : university_form, 'profile_form': profile_form,  'registered': is_registered}
-    #context_dict = {'user_form': user_form, 'profile_form': profile_form,  'registered': is_registered}
+    #context_dict = {'user_form': user_form,'university_form' : university_form, 'profile_form': profile_form,  'registered': is_registered}
+    context_dict = {'user_form': user_form, 'profile_form': profile_form,  'registered': is_registered}
+
     context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
 
     recent = request.COOKIES.get("recent")
@@ -283,10 +259,19 @@ def universities(request):
         user_profile = UserProfile.objects.get(user=user_data)
         user_university = University.objects.get(user=user_profile)
         universities = University.objects.all()
-        #universities = University.objects.all().filter(user = user_profile)
+        universities = University.objects.all().filter(user = user_profile)
         context_dict['universities'] = universities
     except: #No associated universities
         context_dict['universities'] = None
+
+    context_dict['form'] = JoinUniversity()
+
+    if request.method == 'POST':
+        form = JoinUniversity(request.POST)
+        if form.is_valid():
+            add_uni = University.objects.filter(name__icontains=form.cleaned_data['universities'])
+            context_dict['universities'] = add_uni
+            context_dict['form'] = form
 
     
     context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
@@ -467,7 +452,7 @@ def show_general_page(request, category_name_slug, page_name_slug):
 
     try:
         category = Category.objects.get(name=category_name_slug)
-        page = Page.objects.get(slug=page_name_slug)
+        page = Page.objects.filter(slug=page_name_slug)[0]
         comments = Comment.objects.filter(post=page)
 
         context_dict['page'] = page
@@ -479,17 +464,17 @@ def show_general_page(request, category_name_slug, page_name_slug):
         context_dict['category'] = None
         context_dict['comments'] = None
 
-    # Needs if not user.is_authenticated()
-    if request.method == 'POST':
-        form = CommentForm(request.POST, initial={'pinned': False, 'post':page})
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = CommentForm(request.POST, initial={'pinned': False, 'post':page})
 
-        if form.is_valid():
-            if page:
-                comment = form.save(commit=False)
-                comment.post = page
-                comment.pinned = False
-                comment.save()
-        context_dict['form'] = form
+            if form.is_valid():
+                if page:
+                    comment = form.save(commit=False)
+                    comment.post = page
+                    comment.pinned = False
+                    comment.save()
+            context_dict['form'] = form
 
     return render(request, 'collab_app/show_page.html', context_dict)
 
@@ -536,6 +521,8 @@ def add_general_page(request, category_name_slug):
 
     try:
         category = Category.objects.get(slug=category_name_slug)
+        user_data = User.objects.get(username=request.user.username)
+        user_profile = UserProfile.objects.get(user=user_data)
 
     except Category.DoesNotExist:
         category = None
@@ -548,8 +535,9 @@ def add_general_page(request, category_name_slug):
             if category:
                 page = form.save(commit=False)
                 page.category = category
+                page.user = user_profile
                 page.save()
-                return redirect(reverse('collab_app:show_category', {'category_name_slug': category_name_slug}))
+                return redirect(reverse('collab_app:show_general_category', kwargs={'category_name_slug': category_name_slug}))
             
         else:
             print(form.errors)

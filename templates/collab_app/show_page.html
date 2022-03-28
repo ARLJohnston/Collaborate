@@ -10,6 +10,7 @@
 {% block body_block %}
 <h1>{{ page.title }}</h1>
 <body>
+	<script src="{% static 'js/ajax.js' %}"></script>
 	{{ page.text }}
 </body>
 
@@ -29,11 +30,10 @@
 				 data-pageid="{{ page.id }}"
 				  class="btn btn-primary btn-sm"
 				  type="button">
-		<span data-feather="thumbs-up"></span>
 		Like Page
-	</button>
-	
+	</button>	
 {% endif %}
+
 {% if comments %}
 	{% for comment in comments %}
 	<ul>

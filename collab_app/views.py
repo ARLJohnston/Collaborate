@@ -40,28 +40,14 @@ def index(request):
 def about(request):
     """Takes url request, returns about page"""
     context_dict = {}
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
+    styling_function(request, True, context_dict)
 
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
-
-    recent = request.COOKIES.get("recent")
-    print(recent)
-    recent_list = []
-    if(recent):
-        for page in recent.split(","):
-            recent_list += page
     return render(request, 'collab_app/about.html', context=context_dict)
 
 def contact_us(request):
     """Takes url request, returns contact-us page"""
     context_dict = {}
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
+    styling_function(request, True, context_dict)
 
     return render(request, 'collab_app/contact_us.html', context=context_dict)
 
@@ -105,11 +91,7 @@ def sign_up(request):
     #context_dict = {'user_form': user_form,'university_form' : university_form, 'profile_form': profile_form,  'registered': is_registered}
     context_dict = {'user_form': user_form, 'profile_form': profile_form,  'registered': is_registered}
 
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
+    styling_function(request, True, context_dict)
 
     return render(request, 'collab_app/sign_up.html', context=context_dict)
 
@@ -117,10 +99,7 @@ def login_view(request):
     """Takes url request, returns login page"""
     # If the request is a HTTP POST, try to pull out the relevant information.
     context_dict = {}
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
+    styling_function(request, True, context_dict)
 
     if request.method == 'POST':
 
@@ -209,14 +188,8 @@ def my_account(request):
             profile.save()
 
             context_dict= {'user_form': user_form,'user_profile_form': user_profile_form, }
-
-            context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-            recent = request.COOKIES.get("recent")
-            recent_list = []
-            if(recent):
-                for page in recent.split(";"):
-                    recent_list += page
+            
+            styling_function(request, True, context_dict)
 
         #return render(request, 'collab_app/my_account.html', context=context_dict)
         return redirect('/collab_app/')
@@ -226,11 +199,7 @@ def my_account(request):
     else:
         context_dict = {'user_form': user_form,'user_profile_form': user_profile_form}
         
-        context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-        recent = request.COOKIES.get("recent")
-        if(recent):
-            context_dict["recent"] = recent.split(",")
+        styling_function(request, True, context_dict)
 
         return render(request, 'collab_app/my_account.html', context=context_dict)
 
@@ -238,13 +207,13 @@ def general(request):
     """Takes url request, returns general page"""
     context_dict = {}
     
-    styling_function(request, False, context_dict)
-
     bad_category_slugs = [cat.category.slug for cat in ForumCategoryAssociation.objects.all()]
     category_list = Category.objects.order_by('name').exclude(slug__in=bad_category_slugs)
 
 
     context_dict["categories"] = category_list
+
+    styling_function(request, True, context_dict)
 
     return render(request, 'collab_app/general.html', context=context_dict)
     
@@ -273,12 +242,7 @@ def universities(request):
             context_dict['universities'] = add_uni
             context_dict['form'] = form
 
-    
-    context_dict["page"] = "collab_app:" + resolve(request.path_info).url_name
-
-    recent = request.COOKIES.get("recent")
-    if(recent):
-        context_dict["recent"] = recent.split(",")
+    styling_function(request, True, context_dict)
 
     return render(request, 'collab_app/universities.html', context=context_dict)
 
@@ -297,6 +261,9 @@ def show_university(request, university_name_slug):
         context_dict['university'] = None
         context_dict['categories'] = None
 
+
+    print("[show_university]:=", context_dict)
+    styling_function(request, False, context_dict)
     return render(request, 'collab_app/show_university.html', context=context_dict)
 
 def add_university(request):
@@ -318,6 +285,7 @@ def add_university(request):
             return redirect('/collab_app/')
         else:
             print(form.errors)
+    styling_function(request, True, context_dict)
     return render(request, 'collab_app/add_university.html', {'form':form})
 
 def show_general_category(request, category_name_slug):
@@ -337,9 +305,9 @@ def show_general_category(request, category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
+    print("[SHOW_GENERAL_CATEGORY] :=", context_dict)
     styling_function(request, False, context_dict)
 
-    print("[SHOW_GENERAL_CATEGORY] :=", context_dict)
     return render(request, 'collab_app/show_category.html', context=context_dict)
 
 def show_university_category(request, university_name_slug, category_name_slug):
@@ -392,7 +360,8 @@ def add_general_category(request):
 
         else:
             print(form.errors)
-
+            
+    styling_function(request, True, context_dict)
     return render(request, 'collab_app/add_category.html', {'form': form, 'current_url': current_url})
 
 def add_university_category(request, university_name_slug):
@@ -425,7 +394,8 @@ def add_university_category(request, university_name_slug):
 
         else:
             print(form.errors)
-
+    
+    styling_function(request, True, context_dict)
     return render(request, 'collab_app/add_category.html', context_dict)
 
 class like_page_view(View):
@@ -475,6 +445,7 @@ def show_general_page(request, category_name_slug, page_name_slug):
                     comment.save()
             context_dict['form'] = form
 
+    styling_function(request, False, context_dict)
     return render(request, 'collab_app/show_page.html', context_dict)
 
 
@@ -509,6 +480,7 @@ def show_university_page(request, university_name_slug, category_name_slug, page
 
         context_dict['form'] = form
 
+    styling_function(request, False, context_dict)
     return render(request, 'collab_app/show_page.html', context_dict)
 
      
@@ -543,6 +515,7 @@ def add_general_page(request, category_name_slug):
     
     context_dict = {'form': form, 'category': category}
 
+    styling_function(request, True, context_dict)
     return render(request, 'collab_app/add_page.html', context=context_dict)
 
 def add_university_page(request, university_name_slug, category_name_slug):
@@ -569,7 +542,8 @@ def add_comment(request, page_name_slug):
         else:
             print(form.errors)
     context_dict = {'form': form, 'page':page}
-
+    
+    styling_function(request, True, context_dict)
     return render(request, 'collab_app/add_comment.html', context=context_dict)
 
 
@@ -583,5 +557,6 @@ def search_bar(request):
 
         pages = Page.objects.all().filter(title__contains=search)
         print("[PAGES FOUND]:", pages)
+        styling_function(request, False, context_dict)
         return render(request, 'collab_app/search_result.html', {'pages':pages})
     

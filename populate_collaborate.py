@@ -134,7 +134,9 @@ def populate():
                   {'id': 442983, 'user_name': 'Gulati_Naman', 'superuser': True, 'first_name': 'Naman',
                    'last_name': 'Gulati', 'email': '00naman@test.com'},
                   {'id': 594999, 'user_name': 'MarinaSJP', 'superuser': True, 'first_name': 'Marina',
-                   'last_name': 'San Jose Pena', 'email': 'marinasj@test.com'}]
+                   'last_name': 'San Jose Pena', 'email': 'marinasj@test.com'},
+                  {'id': 267564, 'user_name': 'JayYuen', 'superuser': True, 'first_name': 'KaiTing',
+                   'last_name': 'Yuen', 'email': 'JayYuen@test.com'}]
 
     for user in test_users:
         add_user(user['id'], user['user_name'], user['superuser'], user['email'], user['first_name'], user['last_name'])

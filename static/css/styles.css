@@ -152,27 +152,6 @@ a:visited {
     transform: translateY(65%);
   }
 
-  @media screen and (min-width: 768px) {
-      #link-box{
-        display: inline-block;
-        color: var(--secondaryColor);
-        float: right;
-        width: 10%;
-        padding: 10px;
-        margin-right: 20px;
-        height: 100%;
-
-        /*Box styling*/
-        border-radius: 25px;
-        border-top: none;
-        border: 2px solid var(--secondaryColor);
-
-        position:fixed;
-        top: 50%;
-        height: auto;
-        right: 10px;
-      }
-  }
 .searchButton {
   margin-top: 8px;
   height: 30px;

@@ -367,6 +367,7 @@ def add_university_category(request, university_name_slug):
         university = University.objects.get(slug=university_name_slug)
         form = CategoryForm(request.POST)
         context_dict['form'] = form
+        context_dict['university'] = university
 
     except University.DoesNotExist:
         return redirect('collab_app:index')
@@ -388,7 +389,7 @@ def add_university_category(request, university_name_slug):
                 new_cat.forum = forum
                 new_cat.save()
                 ForumCategoryAssociation.objects.get_or_create(category=new_cat, forum=forum)
-            return redirect(reverse('collab_app:show_university ', kwargs={'university_name_slug': university_name_slug}))
+            return redirect(reverse('collab_app:index'))
 
         else:
             print(form.errors)

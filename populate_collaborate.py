@@ -1,8 +1,6 @@
 import os
 import random
 
-from django.template.defaultfilters import slugify
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'collaborate.settings')
 
@@ -14,51 +12,110 @@ from django.contrib.auth.models import User
 
 
 def populate():
-    university_comments = [
+    glasgow_coffee_comments = [
         {'body': 'I don\'t know'},
-        {'body': 'Tea is better than coffee'}
+        {'body': 'Tea is better than coffee.'},
+        {'body': 'You should try Morning Glory in Great Western Road!!'}
     ]
 
-    university_pages = [
+    glasgow_party_comments = [
+        {'body': 'I don\'t like clubbing, so idk'},
+        {'body': 'Definitely Hive!!'},
+        {'body': 'It HAS to be the garage'},
+        {'body': 'Neither, Mango beats both'}
+    ]
+
+    glasgow_student_life_pages = [
         {'title': 'Where are the best coffee shops?',
          'text': 'I\'m a first year looking for the best coffee shops around campus. Any suggestions?',
-         'comments': university_comments
+         'comments': glasgow_coffee_comments
+         },
+        {'title': 'What is better, Hive or The Garage?',
+         'text': 'I\'m looking to finally settling the debate!',
+         'comments': glasgow_party_comments
          }
     ]
 
-    university_categories = [
+    glasgow_studying_comments = [
+        {'body': 'I just cram the day before the exam tbh lmao'},
+        {'body': 'Personally, the pomodoro technique seems to work the best! I urge you to try it too!!'}
+    ]
+
+    glasgow_uni_work_pages = [
+        {'title': 'Do you follow any study techniques?',
+         'text': 'I\'ve been trying several different studying techniques and nothing seems to work. What do you guys '
+                 'do?',
+         'comments': glasgow_studying_comments
+         }
+    ]
+
+    glasgow_categories = [
         {'name': 'Student life',
-         'pages': university_pages},
+         'pages': glasgow_student_life_pages},
         {'name': 'Uni work',
-         'pages': university_pages}
+         'pages': glasgow_uni_work_pages}
+    ]
+
+    glasgow_sun_comments = [
+        {'body': 'So pretty!'},
+    ]
+
+    cambridge_student_life_pages = [
+        {'title': 'Sunny day in Cambridge <3',
+         'text': 'I\'m a first year looking for the best coffee shops around campus. Any suggestions?',
+         'comments': glasgow_sun_comments
+         },
+    ]
+
+    cambridge_badminton_comments = [
+        {'body': 'I\'d love to!'},
+    ]
+
+    cambridge_sport_pages = [
+        {'title': 'Anyone want to be my badminton buddy?',
+         'text': 'I want to play badminton but have no one to do it with :(',
+         'comments': cambridge_badminton_comments
+         }
+    ]
+
+    cambridge_categories = [
+        {'name': 'Sports',
+         'pages': cambridge_sport_pages},
+        {'name': 'Student life',
+         'pages': cambridge_student_life_pages}
     ]
 
     universities = [
         {
             "name": "University of glasgow",
-            "categories": university_categories
+            "categories": glasgow_categories
         },
         {
-            "name": "University of Strathclyde",
-            "categories": university_categories
+            "name": "University of Cambridge",
+            "categories": cambridge_categories
         }
     ]
 
-    general_comments = [
-        {'body': 'First'},
-        {'body': 'Glasgow is the best uni!'}
+    general_do_better_comments = [
+        {'body': 'Be sure to eat healthy and always sleep over 7h every day. Uni is not worth your mental and '
+                 'physical health.'},
+        {'body': 'Get in contact with other classmates. Form a study group where you can help each other.'}
+    ]
+
+    general_friends_comments = [
+        {'body': 'Join societies! That\'s the quickest way of finding people with similar interests.'},
     ]
 
     general_pages = [
         {'title': 'I have no friends. Help!',
          'text': 'I moved to the city two months ago and I still do not know anyone. How do you make new friends at '
                  'uni?',
-         'comments': university_comments
+         'comments': general_friends_comments
          },
         {'title': 'Any tips to do better at uni?',
          'text': 'I\'m finding first year really difficult. Not only the work, but also I\'m only sleeping an average '
-                 'of 4h a day. Is anyone having a similar experience?',
-         'comments': university_comments
+                 'of 4h a day.',
+         'comments': general_do_better_comments
          }
     ]
 
@@ -99,12 +156,7 @@ def populate():
             for category in forum_data['Category']:  # general_categories
                 print("inside category")
                 cat = add_cat(category['name'], f)
-                for page in category['pages']:  # page inside each category
-                    print("inside page")
-                    p = add_page(cat, page['title'], page['text'], random.choice(user_list))
-                    for com in page['comments']:  # every comment inside every page
-                        print("inside comment")
-                        add_comment(p, com['body'], random.choice(user_list))
+                add_pages_comments(category, cat, user_list)
 
         elif forum == 'Universities':
             for university in forum_data['University']:
@@ -113,12 +165,16 @@ def populate():
                 for category in university['categories']:  # general_categories
                     print("inside category")
                     cat = add_cat(category['name'], f)
-                    for page in category['pages']:  # page inside each category
-                        print("inside page")
-                        p = add_page(cat, page['title'], page['text'], random.choice(user_list))
-                        for com in page['comments']:  # every comment inside every page
-                            print("inside comments")
-                            add_comment(p, com['body'], random.choice(user_list))
+                    add_pages_comments(category, cat, user_list)
+
+
+def add_pages_comments(category, cat, user_list):
+    for page in category['pages']:  # page inside each category
+        print("inside page")
+        p = add_page(cat, page['title'], page['text'], random.choice(user_list))
+        for com in page['comments']:  # every comment inside every page
+            print("inside comments")
+            add_comment(p, com['body'], random.choice(user_list))
 
 
 def add_user_profile(user, user_id):

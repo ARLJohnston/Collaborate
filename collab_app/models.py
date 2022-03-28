@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     picture = models.ImageField(upload_to='profile_images', blank=True)
     biography = models.CharField(max_length=BIO_MAX_LENGTH, unique=False, null=True)
     # This includes email validation
-    email = models.EmailField(max_length=EMAIL_MAX_LENGTH, null=False, default=True)
+    email = models.EmailField(max_length=EMAIL_MAX_LENGTH, null=False)
 
     def __str__(self):
         return self.user.username

@@ -1,13 +1,15 @@
 import os
 import random
-import django
-from collab_app.models import Category, Page, Comment, University, Forum, UserProfile, ForumCategoryAssociation
-from django.contrib.auth.models import User
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE',
                       'collaborate.settings')
 
+import django
+
 django.setup()
+from collab_app.models import Category, Page, Comment, Like, University, Forum, UserProfile, ForumCategoryAssociation
+from django.contrib.auth.models import User
+
 
 
 def populate():

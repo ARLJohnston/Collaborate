@@ -269,6 +269,8 @@ def show_university(request, university_name_slug):
 def add_university(request):
     """Takes url request, returns the creation page for new universities"""
     
+    context_dict = {}
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
 
@@ -339,14 +341,14 @@ def show_university_category(request, university_name_slug, category_name_slug):
 def add_general_category(request):
     """Takes url request, returns the creation page for new categories"""
 
+    context_dict = {}
+
     if not request.user.is_authenticated:
         return HttpResponse("User not authenticated.")
 
-    
     current_url = resolve(request.path_info).url_name
     
     form = CategoryForm()
-    
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
@@ -548,6 +550,8 @@ def add_comment(request, page_name_slug):
 
 
 def search_bar(request):
+
+    context_dict = {}
     if request.method == 'GET':
         search = request.GET.get('search')
         print("[SEARCH QUERY]:", search)

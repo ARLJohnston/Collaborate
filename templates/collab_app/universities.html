@@ -8,10 +8,10 @@
 {% endblock %}
 
 {% block body_block %}
-<h1>Fuck you</h1>
-<form id="join_uni_form" method="POST" >
+<h1>Search for a University</h1>
+<form id="uni-search" method="POST" >
 	{% csrf_token %}
-	{{ form.as_p}}
+	{{ form.as_p }}
 </form>
 {% if universities %}
 	<ul>
@@ -20,8 +20,6 @@
 		<a href="{% url 'collab_app:show_university' university.slug%}">{{ university.name }}</a>
 		</li>
 	{% endfor %}
-{% else %}
-<strong>You are not part of a university</strong>
 {% endif %}
 
 

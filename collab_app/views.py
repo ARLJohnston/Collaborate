@@ -210,7 +210,6 @@ def general(request):
     bad_category_slugs = [cat.category.slug for cat in ForumCategoryAssociation.objects.all()]
     category_list = Category.objects.order_by('name').exclude(slug__in=bad_category_slugs)
 
-
     context_dict["categories"] = category_list
 
     styling_function(request, True, context_dict)
@@ -380,19 +379,26 @@ def add_university_category(request, university_name_slug):
         context_dict['form'] = form
 
     except University.DoesNotExist:
-        return redirect('/collab_app/')
+        return redirect('collab_app:index')
 
     if request.method == 'POST': # A HTTP POST?
         form = CategoryForm(request.POST)
         forum = university.forum
         
         if form.is_valid():
-            new_cat = form.save(commit=False)
-            new_cat.name = form.cleaned_data['name']
-            new_cat.forum = forum
-            new_cat.save()
-            ForumCategoryAssociation.objects.get_or_create(category=new_cat, forum=forum)     
-            return redirect('/collab_app/')
+            try:
+                 Category.objects.get(name=form.cleaned_data['name'])
+                 isNew = False
+            except Category.DoesNotExist:
+                isNew = True
+
+            if isNew:
+                new_cat = form.save(commit=False)
+                new_cat.name = form.cleaned_data['name']
+                new_cat.forum = forum
+                new_cat.save()
+                ForumCategoryAssociation.objects.get_or_create(category=new_cat, forum=forum)     
+            return redirect(reverse('collab_app:index'))
 
         else:
             print(form.errors)
@@ -422,9 +428,12 @@ def show_general_page(request, category_name_slug, page_name_slug):
     context_dict = {}
 
     try:
-        category = Category.objects.get(name=category_name_slug)
+        category = Category.objects.get(slug=category_name_slug)
+        print("CATEGORY:",category)
         page = Page.objects.filter(slug=page_name_slug)[0]
+        print("PAGES:",page)
         comments = Comment.objects.filter(post=page)
+        print("COMMENT:",comments)
 
         context_dict['page'] = page
         context_dict['category'] = category
@@ -457,8 +466,11 @@ def show_university_page(request, university_name_slug, category_name_slug, page
     try:
         context_dict = {}
         university = University.objects.get(slug=university_name_slug)
+        print(university)
         category = Category.objects.get(slug=category_name_slug)
+        print(category)
         page = Page.objects.get(slug=page_name_slug)
+        print(page)
 
         context_dict["university"] = university
         context_dict["category"] = category

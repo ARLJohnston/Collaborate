@@ -11,7 +11,6 @@ from collab_app.models import Category, Page, Comment, University, Forum, UserPr
 from django.contrib.auth.models import User
 
 
-
 def populate():
     glasgow_coffee_comments = [
         {'body': 'I don\'t know'},
@@ -152,20 +151,19 @@ def populate():
         f = add_forum(forum)
         if forum == 'General':
             for category in forum_data['Category']:  # general_categories
-                print("inside category")
                 cat = add_cat(category['name'], f)
                 forum_category = add_forum_category_association(f, cat)
                 add_pages_comments(category, forum_category.category, user_list)
 
         else:
             university_categories = forum_data['University']
-            print("inside unis")
             add_university(forum, random.choice(user_list), f)
             for category in university_categories:  # university_categories
-                print("inside category")
                 cat = add_cat(category['name'], f)
                 forum_category = add_forum_category_association(f, cat)
                 add_pages_comments(category, forum_category.category, user_list)
+
+    print("Population script finished.")
 
 
 def add_forum_category_association(forum, category):
@@ -175,23 +173,21 @@ def add_forum_category_association(forum, category):
 
 
 def add_pages_comments(category, cat, user_list):
-    for page in category['pages']:  # page inside each category
-        print("inside page")
+    for page in category['pages']:  # page inside each category/uni
         p = add_page(cat, page['title'], page['text'], random.choice(user_list))
         for com in page['comments']:  # every comment inside every page
-            print("inside comments")
             add_comment(p, com['body'], random.choice(user_list))
 
 
 def add_user_profile(user, user_id):
-    u = UserProfile.objects.get_or_create(user=user, user_id=user_id, picture='/Collaborate/media/profile_images/wallpaper.png')[0]
+    u = UserProfile.objects.get_or_create(user=user, user_id=user_id)[0]
     u.save()
     return u
 
 
 def add_user(user_id, user_name, superuser, email, first_name, last_name):
     u = User.objects.get_or_create(id=user_id, username=user_name, is_superuser=superuser, email=email,
-                                   first_name=first_name, last_name=last_name, password=user_name + '27')
+                                   first_name=first_name, last_name=last_name)
     return u
 
 

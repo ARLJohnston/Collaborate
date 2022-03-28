@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE',
 import django
 
 django.setup()
-from collab_app.models import Category, Page, Comment, Like, University, Forum, UserProfile
+from collab_app.models import Category, Page, Comment, Like, University, Forum, UserProfile, ForumCategoryAssociation
 from django.contrib.auth.models import User
 
 
@@ -85,16 +85,10 @@ def populate():
          'pages': cambridge_student_life_pages}
     ]
 
-    universities = [
-        {
-            "name": "University of glasgow",
-            "categories": glasgow_categories
-        },
-        {
-            "name": "University of Cambridge",
-            "categories": cambridge_categories
-        }
-    ]
+    universities = {
+        'University of Glasgow': glasgow_categories,
+        'University of Cambridge': cambridge_categories
+    }
 
     general_do_better_comments = [
         {'body': 'Be sure to eat healthy and always sleep over 7h every day. Uni is not worth your mental and '
@@ -126,7 +120,8 @@ def populate():
 
     # Print out the categories we have added.
     forums = {'General': {'Category': general_categories},
-              'Universities': {'University': universities}
+              'University of Glasgow': {'University': universities['University of Glasgow']},
+              'University of Cambridge': {'University': universities['University of Cambridge']}
               }
 
     test_users = [{'id': 123456, 'user_name': 'AlistairJ', 'superuser': True, 'first_name': 'Alistair',
@@ -156,16 +151,24 @@ def populate():
             for category in forum_data['Category']:  # general_categories
                 print("inside category")
                 cat = add_cat(category['name'], f)
-                add_pages_comments(category, cat, user_list)
+                forum_category = add_forum_category_association(f, cat)
+                add_pages_comments(category, forum_category.category, user_list)
 
-        elif forum == 'Universities':
-            for university in forum_data['University']:
-                print("inside unis")
-                uni = add_university(university['name'], random.choice(user_list), f)
-                for category in university['categories']:  # general_categories
-                    print("inside category")
-                    cat = add_cat(category['name'], f)
-                    add_pages_comments(category, cat, user_list)
+        else:
+            university_categories = forum_data['University']
+            print("inside unis")
+            uni = add_university(forum, random.choice(user_list), f)
+            for category in university_categories:  # general_categories
+                print("inside category")
+                cat = add_cat(category['name'], f)
+                forum_category = add_forum_category_association(f, cat)
+                add_pages_comments(category, forum_category.category, user_list)
+
+
+def add_forum_category_association(forum, category):
+    fc = ForumCategoryAssociation.objects.get_or_create(forum=forum, category=category)[0]
+    fc.save()
+    return fc
 
 
 def add_pages_comments(category, cat, user_list):

@@ -104,11 +104,11 @@ def populate():
                         print("inside comment")
                         add_comment(p, com['body'], random.choice(user_list))
 
-        elif forum == 'Universities':
+        elif forum == 'University':
             for university in forum_data['University']:
                 print("inside unis")
                 uni = add_university(university)
-                for category in university['categories']:  # general_categories
+                for category in university['categories']:  # university_categories
                     print("inside category")
                     cat = add_cat(category['name'], f)
                     for page in category['pages']:  # page inside each category

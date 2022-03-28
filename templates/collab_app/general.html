@@ -13,9 +13,9 @@
 	<a href="{% url 'collab_app:add_general_category' %}">Add a Category here</a>
 {% endif %}
 
-{% if category %}
+{% if categories %}
 <ul>
-	{% for cat in category %}
+	{% for cat in categories %}
 	<li>
 		<a href="{% url 'collab_app:show_general_category' cat.slug %}">{{ cat.name }}</a>
 	</li>

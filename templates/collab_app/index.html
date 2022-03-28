@@ -9,31 +9,6 @@
 
 {% block body_block %}
 	<div>
-		{% if user.is_authenticated %}
-		<li><a href="{% url 'collab_app:universities' %}">Unis</a></li>
-		<li><a href="{% url 'collab_app:add_university' %}">Add University</a></li>
-		{% else %}
-		<li><a href="{% url 'collab_app:sign_up' %}">Sign-up</a></li>
-		<li><a href="{% url 'collab_app:login' %}">Login</a></li>
-		
-		{% endif %}
-		<li><a href="{% url 'collab_app:general' %}">General</a></li>
-		<li><a href="{% url 'collab_app:about' %}">About</a></li>
-		<li><a href="{% url 'collab_app:contact_us' %}">Contact us</a></li>
-		<li><a href="{% url page %}">{{ page }}</a></li>
-	</div>
-
-	<div>
-	{% if recent %}
-		<ul>
-			{% for element in recent %}
-				<li><a href="{% url element %}">{{ element }}</a></li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-	</div>
-
-	<div>
 		<h1 class="centerText">Collaborate</h1>
 	</div>
 
@@ -56,6 +31,20 @@
 		<form class="inlineElements" action="{% url 'collab_app:general' %}">
 			<input type="submit" value="Continue to main site">
 		</form>
+	</div>
+
+	<div>
+		{% if user.is_authenticated %}
+		<li><a href="{% url 'collab_app:universities' %}">Unis</a></li>
+		<li><a href="{% url 'collab_app:add_university' %}">Add University</a></li>
+		{% else %}
+		<li><a href="{% url 'collab_app:sign_up' %}">Sign-up</a></li>
+		<li><a href="{% url 'collab_app:login' %}">Login</a></li>
+		
+		{% endif %}
+		<li><a href="{% url 'collab_app:general' %}">General</a></li>
+		<li><a href="{% url 'collab_app:about' %}">About</a></li>
+		<li><a href="{% url 'collab_app:contact_us' %}">Contact us</a></li>
 	</div>
 	
 {% include 'collab_app/link_box.html' %}

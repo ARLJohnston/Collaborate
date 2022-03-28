@@ -29,7 +29,7 @@
             <button class="searchButton" type="submit">Search</button>
         </form>
         {% if user.is_authenticated %}
-            <form action="{% url 'collab_app:logout' %}">
+            <form class="centeredTopnav" action="{% url 'collab_app:logout' %}">
                 <input type="submit" value="Log Out">
             </form>
             {% if profile_picture %}
@@ -38,7 +38,7 @@
                 </a>
             {% else %}
                 <a href="{% url 'collab_app:my_account'%}">
-                    <img src="{% static 'images/cog.png' %}" alt="My-Account" height="50" width="50">
+                    <img id="accountButton" src="{% static 'images/cog.png' %}" alt="My-Account" height="50" width="50">
                 </a>
                 {% endif %}
 	{% endif %}

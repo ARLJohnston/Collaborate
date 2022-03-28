@@ -17,7 +17,7 @@
 	<ul>
 	{% for university in universities %}
 	<li>
-		<a href="{% url 'collab_app:show_university' university.slug%}">{{ university.name }}</a>
+		<a href="{% url 'collab_app:show_university' university.slug %}">{{ university.name }}</a>
 		</li>
 	{% endfor %}
 {% endif %}

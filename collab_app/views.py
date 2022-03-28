@@ -220,14 +220,7 @@ def universities(request):
     """Takes url request, returns universities page"""
     context_dict = {}
     try:
-        username = request.user.username
-        user_data = User.objects.get(username=username)
-        user_profile = UserProfile.objects.get(user=user_data)
-        user_university = University.objects.get(user=user_profile)
-
-        universities = University.objects.all()
-        universities = University.objects.all().filter(user = user_profile)
-        context_dict['universities'] = universities
+        context_dict['universities'] = University.objects.all()
     except: #No associated universities
         context_dict['universities'] = None
 

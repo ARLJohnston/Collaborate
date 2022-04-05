@@ -23,4 +23,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('collab_app/', include('collab_app.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('registration.backends.simple.urls')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

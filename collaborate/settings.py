@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'collab_app'
+    'collab_app',
+    'registration'
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,14 @@ STATICFILES_DIRS = [STATIC_DIR, ]
 # Media files (dynamic storage)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = MEDIA_DIR
+
+# If True, users can register.
+REGISTRATION_OPEN = True
+# If True, the user will be automatically logged in after registering.
+REGISTRATION_AUTO_LOGIN = True
+# The URL that Django redirects users to after logging in.
+LOGIN_REDIRECT_URL = 'collab_app:index'
+# The page users are directed to if they are not logged in.
+# This was set in a previous chapter. The registration package uses this, too.
+LOGIN_URL = 'auth_login'
+
